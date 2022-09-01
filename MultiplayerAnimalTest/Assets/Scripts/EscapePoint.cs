@@ -2,25 +2,31 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using FishNet;
 using FishNet.Object;
 using UnityEngine;
 
 public class EscapePoint : NetworkBehaviour
 {
-    private int _numPlayersPresent = 0;
-    private int _maxPlayers = 0;
+    private int _maxPlayers = 1;
+
+    private HashSet<int> _presentPlayerIds;
 
     private void Start()
     {
-        PiersEvent.Listen<Transform>(PiersEventKey.EventKey.ClientJoined, OnClientJoined);
+        if (IsServer)
+        {
+            _presentPlayerIds = new HashSet<int>();
+            PiersEvent.Listen<List<Transform>>(PiersEventKey.EventKey.PlayerCacheUpdated, OnPlayerCacheUpdated);
+        }
     }
-
-    private void OnClientJoined(Transform t)
+    
+    private void OnPlayerCacheUpdated(List<Transform> transforms)
     {
-        _maxPlayers = NetworkManager.ClientManager.Clients.Count;
+        if (!IsServer)
+            return;
         
-        if(IsServer)
-            _maxPlayers++;
+        _maxPlayers = transforms.Count;
     }
 
     private void Update()
@@ -28,11 +34,10 @@ public class EscapePoint : NetworkBehaviour
         if (!IsServer)
             return;
         
-        if (_numPlayersPresent > 0)
+        if (_presentPlayerIds.Count > 0)
         {
-            if (_maxPlayers == NetworkManager.ClientManager.Clients.Count)
+            if (_presentPlayerIds.Count == _maxPlayers)
             {
-                Debug.Log("all players present for exit");
                 if (CheckWinConditions())
                 {
                     Debug.Log("Players Win!");
@@ -41,13 +46,22 @@ public class EscapePoint : NetworkBehaviour
         }
     }
 
+    private bool CheckIfAnyPlayerHasTruckKey()
+    {
+        foreach (var playerTransform in FreeRangePlayerManager.Instance.GetPlayerTransforms())
+        {
+            var chickController = playerTransform.GetComponent<ChickPlayerController>();
+            if (chickController != null && chickController.GetEquippedPickUp() == EPickUpID.TruckKeys)
+                return true;
+        }
+
+        return false;
+    }
+
     private bool CheckWinConditions()
     {
-        //check if one of the players has the truck key
-        Debug.Log(NetworkManager.ClientManager.Clients.Count);
-        Debug.Log(NetworkManager.ClientManager.Clients.First().Value.FirstObject.name);
-        var firstPlayer = NetworkManager.ClientManager.Clients.First().Value.FirstObject.GetComponent<ChickPlayerController>();
-        if (firstPlayer)
+        var HaveTruckKeys = CheckIfAnyPlayerHasTruckKey();
+        if (HaveTruckKeys)
             return true;
         
         return false;
@@ -57,7 +71,14 @@ public class EscapePoint : NetworkBehaviour
     {
         if (IsServer)
         {
-            _numPlayersPresent++;
+            var networkObject = other.GetComponent<NetworkObject>();
+
+            if (!networkObject)
+                return;
+            
+            _presentPlayerIds.Add(networkObject.Owner.ClientId);
+                
+            Debug.Log(_presentPlayerIds.Count + " / " + _maxPlayers);
         }
     }
 
@@ -65,7 +86,12 @@ public class EscapePoint : NetworkBehaviour
     {
         if (IsServer)
         {
-            _numPlayersPresent--;
+            var networkObject = other.GetComponent<NetworkObject>();
+
+            if (!networkObject)
+                return;
+            
+            _presentPlayerIds.Remove(networkObject.Owner.ClientId);
         }
     }
 }

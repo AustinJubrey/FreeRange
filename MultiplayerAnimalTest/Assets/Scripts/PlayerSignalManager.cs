@@ -4,20 +4,27 @@ using UnityEngine;
 
 public class PlayerSignalManager : NetworkBehaviour
 {
-    
-    void Start()
-    {
-    }
-
     public override void OnStartClient()
     {
         base.OnStartClient();
         PostPresence();
     }
+    
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+        PostExit();
+    }
 
     [ServerRpc]
     private void PostPresence()
     {
-        PiersEvent.Post<Transform>(PiersEventKey.EventKey.ClientJoined, transform);
+        PiersEvent.Post(PiersEventKey.EventKey.ClientJoined);
+    }
+    
+    [ServerRpc]
+    private void PostExit()
+    {
+        PiersEvent.Post(PiersEventKey.EventKey.ClientExited);
     }
 }

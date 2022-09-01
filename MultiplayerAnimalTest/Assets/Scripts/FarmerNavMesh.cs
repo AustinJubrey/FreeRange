@@ -116,6 +116,11 @@ public class FarmerNavMesh : NetworkBehaviour
         _targetPlayers.Add(playerTransform);
     }
 
+    public void SetPlayerTargets(List<Transform> transforms)
+    {
+        _targetPlayers = transforms;
+    }
+
     private void OnStartChasing()
     {
         _isRunning = true;

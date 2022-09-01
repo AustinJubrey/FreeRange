@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using FishNet.Object;
 using UnityEngine;
 
@@ -25,7 +26,7 @@ public class FarmerController : NetworkBehaviour
         _backStabPoint.SetEnterCallback(OnBackStabAvailable);
         _backStabPoint.SetExitCallback(OnBackStabNoLongerAvailable);
         
-        PiersEvent.Listen<Transform>(PiersEventKey.EventKey.ClientJoined, OnClientJoined);
+        PiersEvent.Listen<List<Transform>>(PiersEventKey.EventKey.PlayerCacheUpdated, OnPlayerCacheUpdated);
     }
     
     [ServerRpc(RequireOwnership = false)]
@@ -65,8 +66,8 @@ public class FarmerController : NetworkBehaviour
         _ankleLightActive = false;
     }
 
-    private void OnClientJoined(Transform transform)
+    private void OnPlayerCacheUpdated(List<Transform> transforms)
     {
-        _navController.AddPlayerTarget(transform);
+        _navController.SetPlayerTargets(transforms);
     }
 }

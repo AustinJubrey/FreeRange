@@ -674,7 +674,7 @@ MonoBehaviour:
   _componentIndexCache: 1
   _addedNetworkObject: {fileID: 1574619281779523453}
   _networkObjectCache: {fileID: 1574619281779523453}
-  _moveRate: 2
+  _moveRate: 2.5
   _weaponParent: {fileID: 8604838549857598910}
 --- !u!114 &6078132492479057055
 MonoBehaviour:
