@@ -196,14 +196,6 @@ public class FarmerNavMesh : NetworkBehaviour
         return null;
     }
 
-    private bool GetIsTargetBehind(Transform target)
-    {
-        var targetDir = target.position - transform.position;
-        var angle = Vector3.Angle(targetDir, -transform.forward);
-
-        return angle < _fieldOfViewAngle;
-    }
-
     private void RemoveNullPlayersFromList(List<Transform> toRemove)
     {
         if (toRemove == null || toRemove.Count == 0)
