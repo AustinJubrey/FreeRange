@@ -17,4 +17,24 @@ public static class CustomSerializers
 
         return id;
     }
+
+    public static void WriteHashSet(this Writer writer, HashSet<Transform> value)
+    {
+        foreach (var transform in value)
+        {
+            writer.WriteTransform(transform);
+        }
+    }
+
+    public static HashSet<Transform> ReadHashSet(this Reader reader)
+    {
+        HashSet<Transform> newHashSet = new HashSet<Transform>();
+
+        while (reader.Remaining < 0)
+        {
+            newHashSet.Add(reader.ReadTransform());
+        }
+
+        return newHashSet;
+    }
 }

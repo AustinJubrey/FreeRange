@@ -7,6 +7,7 @@ public enum EPickUpID
     Nothing = 0,
     Knife,
     TruckKeys,
+    CoopCageKey,
 }
 
 public class PickUpData : ScriptableObject

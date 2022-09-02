@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 2845f789a0bac5746b21033a32853739, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -267,7 +267,7 @@ GameObject:
   - component: {fileID: 8424532393839034414}
   - component: {fileID: 1684293928906089121}
   m_Layer: 0
-  m_Name: PickUpTruckKey
+  m_Name: PickUpCageCoopKey
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -308,7 +308,7 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 8424532393839034414}
   _collider: {fileID: 4454769615155243593}
   _interactPrompt: {fileID: 9215175486168984058}
-  _pickUpData: {fileID: 11400000, guid: f62bc59dbe4d00142ab08ed934b62a04, type: 2}
+  _pickUpData: {fileID: 11400000, guid: 40e3256e629a479478d03e830af3bb75, type: 2}
 --- !u!54 &954761824998272552
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -351,7 +351,7 @@ MonoBehaviour:
   <PrefabId>k__BackingField: -1
   _scenePathHash: 0
   <SceneId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 8724607935096171967
+  <AssetPathHash>k__BackingField: 52479167532945750
   _sceneNetworkObjects: []
 --- !u!114 &1684293928906089121
 MonoBehaviour:

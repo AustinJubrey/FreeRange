@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using FishNet.Object;
 using UnityEngine;
 using UnityEngine.AI;
@@ -54,7 +52,6 @@ public class PigController : NetworkBehaviour
         if (_wanderBox == null)
             return;
         
-        Debug.Log("getting random destination");
         _destination = GetRandomPointWithinBounds(_wanderBox.bounds);
         _targetReached = false;
     }
@@ -91,8 +88,6 @@ public class PigController : NetworkBehaviour
             _isWalking = false;
             _animator.SetBool("IsWalking", false);
         }
-        
-        Debug.Log("reached destination");
 
         StartCoroutine(DelayedGoToNextTarget(Random.Range(_wanderDelayRange.x, _wanderDelayRange.y)));
     }
@@ -105,10 +100,7 @@ public class PigController : NetworkBehaviour
             stoppedForASnack = true;
             _animator.SetBool("IsEating", true);
         }
-
         
-        
-        Debug.Log("waiting before next destination");
         yield return new WaitForSeconds(delay);
         
         if(stoppedForASnack)

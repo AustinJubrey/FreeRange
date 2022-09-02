@@ -1,9 +1,6 @@
-﻿using FishNet;
-using FishNet.Object;
+﻿using FishNet.Object;
 using FishNet.Object.Prediction;
-using FishNet.Object.Synchronizing;
 using UnityEngine;
-using UnityEngine.Events;
 
 /*
 * 
@@ -37,9 +34,6 @@ namespace FishNet.Example.Prediction.CharacterControllers
         #region Serialized.
         [SerializeField]
         private float _moveRate;
-        
-        [SerializeField]
-        private Transform _weaponParent;
         #endregion
 
         #region Private.
@@ -55,11 +49,10 @@ namespace FishNet.Example.Prediction.CharacterControllers
             _characterController = GetComponent<CharacterController>();
             _rigidbody = GetComponent<Rigidbody>();
         }
-
-        public override void OnStartClient()
+        
+        public CharacterController GetCharacterController()
         {
-            base.OnStartClient();            
-            //_characterController.enabled = (base.IsServer || base.IsOwner);
+            return _characterController;
         }
 
         private void OnDestroy()

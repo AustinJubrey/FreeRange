@@ -25,6 +25,8 @@ public class FarmerNavMesh : NetworkBehaviour
     private bool _isChasingTarget;
     private bool _isDowned;
 
+    private float _chaseCaptureDistance = 2f;
+
     private float _fieldOfViewAngle = 30f;
     private float _chaseFieldOfViewAngle = 60f;
 
@@ -91,12 +93,7 @@ public class FarmerNavMesh : NetworkBehaviour
         
         if (_isChasingTarget && _chaseTarget)
         {
-            if (!_isRunning)
-            {
-                OnStartChasing();
-            }
-
-            _navMeshAgent.destination = _chaseTarget.position;
+            HandleChasing();
         }
         else if (_targetTransform)
         {
@@ -111,9 +108,23 @@ public class FarmerNavMesh : NetworkBehaviour
             OnReachFarmerTarget();
     }
 
-    public void AddPlayerTarget(Transform playerTransform)
+    private void HandleChasing()
     {
-        _targetPlayers.Add(playerTransform);
+        if (!_isRunning)
+        {
+            OnStartChasing();
+        }
+
+        _navMeshAgent.destination = _chaseTarget.position;
+
+        if (!IsServer)
+            return;
+
+        if (Vector3.Distance(transform.position, _chaseTarget.position) < _chaseCaptureDistance)
+        {
+            _chaseTarget.GetComponent<ChickPlayerController>().TeleportToLocation(FreeRangePlayerManager.Instance.GetCapturedChickSpawn().position);
+            OnStopChasing();
+        }
     }
 
     public void SetPlayerTargets(List<Transform> transforms)
@@ -129,6 +140,7 @@ public class FarmerNavMesh : NetworkBehaviour
     
     private void OnStopChasing()
     {
+        _chaseTarget = null;
         _isRunning = false;
         _isChasingTarget = false;
         _lostChaseCount = 0;

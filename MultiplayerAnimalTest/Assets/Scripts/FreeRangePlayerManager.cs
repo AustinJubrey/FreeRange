@@ -5,10 +5,15 @@ using System.Linq;
 using FishNet;
 using FishNet.Connection;
 using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using UnityEngine;
 
 public class FreeRangePlayerManager : NetworkBehaviour
 {
+    [SyncVar]
+    [SerializeField]
+    private Transform _capturedChickSpawn;
+    
     private List<NetworkConnection> _playerConnections;
     
     //Singleton things
@@ -40,6 +45,11 @@ public class FreeRangePlayerManager : NetworkBehaviour
 
     private void Start()
     {
+    }
+
+    public Transform GetCapturedChickSpawn()
+    {
+        return _capturedChickSpawn;
     }
 
     private void RefreshPlayerConnections()

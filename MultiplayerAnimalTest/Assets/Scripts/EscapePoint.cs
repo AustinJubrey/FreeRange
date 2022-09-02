@@ -14,9 +14,10 @@ public class EscapePoint : NetworkBehaviour
 
     private void Start()
     {
+        _presentPlayerIds = new HashSet<int>();
+        
         if (IsServer)
         {
-            _presentPlayerIds = new HashSet<int>();
             PiersEvent.Listen<List<Transform>>(PiersEventKey.EventKey.PlayerCacheUpdated, OnPlayerCacheUpdated);
         }
     }

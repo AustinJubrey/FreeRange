@@ -8,26 +8,28 @@ using UnityEngine;
 
 public class PlayerInventory : NetworkBehaviour
 {
+
     [SerializeField]
-    private HeldItem _equippedKnife;
-        
-    [SerializeField]
-    private HeldItem _equippedTruckKey;
+    private PickUpData _chickJailKeyData;
     
     [SerializeField]
-    private GameObject _droppedKnife;
+    private PickUpData _truckKeysData;
     
     [SerializeField]
-    private GameObject _droppedTruckKey;
+    private PickUpData _knifeData;
+    
+    [SerializeField]
+    private GameObject _weaponSlot;
     
     private EPickUpID _equippedItem = EPickUpID.Nothing;
+    
+    private HeldItem _heldItem = null;
 
-    // If we can figure out spawning the items correctly on the character,
-    // this function would instead just get the prefab from the PickUpData
     [ServerRpc(RunLocally = true, RequireOwnership = false)]
     public void EquipPickUp(string stringID)
     {
         Enum.TryParse(stringID, out EPickUpID id);
+        GameObject go = null;
         
         switch (id)
         {
@@ -35,21 +37,31 @@ public class PlayerInventory : NetworkBehaviour
                 _equippedItem = EPickUpID.Nothing;
                 break;
             case EPickUpID.Knife:
-                Spawn(_equippedKnife.gameObject);
+                go = Instantiate(_knifeData._equippedPrefab, _weaponSlot.transform);
                 _equippedItem = EPickUpID.Knife;
                 break;
             case EPickUpID.TruckKeys:
-                Spawn(_equippedTruckKey.gameObject);
+                go = Instantiate(_truckKeysData._equippedPrefab, _weaponSlot.transform);
                 _equippedItem = EPickUpID.TruckKeys;
                 break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(id), id, null);
+            case EPickUpID.CoopCageKey:
+                go = Instantiate(_chickJailKeyData._equippedPrefab, _weaponSlot.transform);
+                _equippedItem = EPickUpID.CoopCageKey;
+                break;
+        }
+
+        if (go != null)
+        {
+            _heldItem = go.GetComponent<HeldItem>();
+            go.transform.SetParent(_weaponSlot.transform);
+            Spawn(go);
         }
     }
     
     public void DropEquippedItem()
     {
         GameObject droppedItem = null;
+        Debug.Log("dropping item");
 
         switch (_equippedItem)
         {
@@ -57,12 +69,13 @@ public class PlayerInventory : NetworkBehaviour
                 Debug.Log("Tried to drop nothing");
                 break;
             case EPickUpID.Knife:
-                droppedItem = _droppedKnife;
-                _equippedKnife.DeactivateItem();
+                droppedItem = Instantiate(_knifeData._worldPrefab, transform);
                 break;
             case EPickUpID.TruckKeys:
-                droppedItem = _droppedTruckKey;
-                _equippedTruckKey.DeactivateItem();
+                droppedItem = Instantiate(_truckKeysData._worldPrefab, transform);
+                break;
+            case EPickUpID.CoopCageKey:
+                droppedItem = Instantiate(_chickJailKeyData._worldPrefab, transform);
                 break;
         }
         _equippedItem = EPickUpID.Nothing;
@@ -70,9 +83,15 @@ public class PlayerInventory : NetworkBehaviour
         if (droppedItem == null)
             return;
 
-        GameObject droppedGameObject = Instantiate(droppedItem);
-        droppedGameObject.transform.position = transform.position;
-        Spawn(droppedGameObject);
+        RemoveWeaponGameObject();
+        droppedItem.transform.position = transform.position;
+        droppedItem.transform.SetParent(null);
+        Spawn(droppedItem);
+    }
+
+    private void RemoveWeaponGameObject()
+    {
+        _heldItem.DeactivateItem();
     }
 
     public EPickUpID GetEquippedItem()

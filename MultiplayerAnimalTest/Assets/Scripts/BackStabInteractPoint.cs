@@ -66,7 +66,6 @@ public class BackStabInteractPoint : NetworkBehaviour
         _nearbyPlayer = playerTransform;
         _playerWithinRange = true;
         _backStabPointEnterCallback?.Invoke();
-        Debug.Log(_playerWithinRange);
     }
 
     private void OnTriggerExit(Collider other)
