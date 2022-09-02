@@ -1,18 +1,128 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using FishNet;
+using FishNet.Connection;
+using FishNet.Managing.Scened;
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
+using TMPro;
 using UnityEngine;
 
-public class LobbyController : MonoBehaviour
+public class LobbyController : NetworkBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SyncObject]
+    private readonly SyncDictionary<NetworkConnection, string> _playerNames =
+        new SyncDictionary<NetworkConnection, string>();
+    
+    [SyncObject]
+    private readonly SyncDictionary<NetworkConnection, bool> _playerReadyDict =
+        new SyncDictionary<NetworkConnection, bool>();
+
+    [SerializeField]
+    private TMP_InputField _nameField;
+    
+    [SerializeField]
+    private TextMeshProUGUI _playerNamesLabel;
+    
+    [SerializeField]
+    private TextMeshProUGUI _readyButtonLabel;
+
+    private bool _isReady;
+
+    public override void OnStartClient()
     {
-        
+        base.OnStartClient();
+        _playerNames.OnChange += _playerNames_OnChange;
+        _playerReadyDict.OnChange += __playerReadyDict_OnChange;
+        UpdateReadinessDictionary(_isReady);
+        _readyButtonLabel.color = new Color32(254,9,0,255);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void __playerReadyDict_OnChange(SyncDictionaryOperation op, NetworkConnection key, bool value, bool asServer)
     {
+        UpdatePlayerReadyDict();
+        UpdatePlayerList();
+    }
+
+    private void _playerNames_OnChange(SyncDictionaryOperation op, NetworkConnection key, string value, bool asServer)
+    {
+        UpdatePlayerList();
+    }
+
+    public void OnConfirmName()
+    {
+        UpdateDictionary(_nameField.text);
+    }
+    
+    public void OnReadyButton()
+    {
+        _isReady = !_isReady;
+        _readyButtonLabel.color = _isReady ? new Color32(0,254,111,255) : new Color32(254,9,0,255);
+        UpdateReadinessDictionary(_isReady);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void UpdateDictionary(string name, NetworkConnection conn = null)
+    {
+        _playerNames[conn] = name;
+    }
+    
+    [ServerRpc(RequireOwnership = false)]
+    private void UpdateReadinessDictionary(bool isReady, NetworkConnection conn = null)
+    {
+        _playerReadyDict[conn] = isReady;
+
+        if (CheckIfAllReady())
+        {
+            GoToGameScene();
+        }
+    }
+
+    private bool CheckIfAllReady()
+    {
+        if (_playerReadyDict.Count == 0)
+            return false;
         
+        foreach (var player in _playerReadyDict)
+        {
+            if (!player.Value)
+                return false;
+        }
+
+        return true;
+    }
+
+    private void GoToGameScene()
+    {
+        SceneLoadData sld = new SceneLoadData("TestFarmScene");
+        sld.ReplaceScenes = ReplaceOption.All;
+        InstanceFinder.SceneManager.LoadGlobalScenes(sld);
+    }
+
+    private void UpdatePlayerList()
+    {
+        string updatedString = "Players:\n";
+        foreach (var player in _playerNames)
+        {
+            if(!_playerReadyDict.ContainsKey(player.Key))
+                continue;
+            
+            var nameString = _playerReadyDict[player.Key]
+                ? "<color=green>" + player.Value + "</color> \n"
+                : "<color=red>" + player.Value + "</color> \n";
+            
+            updatedString += nameString;
+        }
+
+        _playerNamesLabel.text = updatedString;
+    }
+    
+    private void UpdatePlayerReadyDict()
+    {
+        foreach (var player in _playerReadyDict)
+        {
+            //update visuals
+        }
     }
 }

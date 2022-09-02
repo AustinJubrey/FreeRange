@@ -6,6 +6,7 @@ using FishNet;
 using FishNet.Connection;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class FreeRangePlayerManager : NetworkBehaviour
@@ -13,6 +14,12 @@ public class FreeRangePlayerManager : NetworkBehaviour
     [SyncVar]
     [SerializeField]
     private Transform _capturedChickSpawn;
+    
+    [SerializeField]
+    private GameObject _playerPrefab;
+    
+    [SerializeField]
+    private Transform _playerSpawn;
     
     private List<NetworkConnection> _playerConnections;
     
@@ -45,6 +52,19 @@ public class FreeRangePlayerManager : NetworkBehaviour
 
     private void Start()
     {
+        Debug.Log("manager started");
+        if (!IsServer)
+        {
+            SpawnPlayer();
+        }
+
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SpawnPlayer(NetworkConnection conn = null)
+    {
+        NetworkObject nob = Instantiate(_playerPrefab, _playerSpawn.position, _playerSpawn.rotation).GetComponent<NetworkObject>();
+        InstanceFinder.ServerManager.Spawn(nob, conn);
     }
 
     public Transform GetCapturedChickSpawn()
