@@ -1,12 +1,8 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using FishNet;
 using FishNet.Connection;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class FreeRangePlayerManager : NetworkBehaviour
@@ -23,6 +19,9 @@ public class FreeRangePlayerManager : NetworkBehaviour
     
     private List<NetworkConnection> _playerConnections;
     
+    private Dictionary<NetworkConnection, string> _playerConnectionNameDict =
+        new Dictionary<NetworkConnection, string>();
+
     //Singleton things
     private static FreeRangePlayerManager _instance;
     public static FreeRangePlayerManager Instance { get { return _instance; } }
@@ -52,12 +51,27 @@ public class FreeRangePlayerManager : NetworkBehaviour
 
     private void Start()
     {
-        Debug.Log("manager started");
         if (!IsServer)
         {
             SpawnPlayer();
         }
+    }
 
+    public Dictionary<NetworkConnection, string> GetConnectionNameDictionary()
+    {
+        return _playerConnectionNameDict;
+    }
+
+    public void SetPlayerDataFromLobby(Dictionary<int, string> nameDict)
+    {
+        if (!IsServer)
+            return;
+        
+        foreach (var entry in InstanceFinder.ServerManager.Clients)
+        {
+            _playerConnectionNameDict.Add(entry.Value, nameDict[entry.Value.ClientId]);
+            Debug.Log(entry.Value);
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -65,6 +79,7 @@ public class FreeRangePlayerManager : NetworkBehaviour
     {
         NetworkObject nob = Instantiate(_playerPrefab, _playerSpawn.position, _playerSpawn.rotation).GetComponent<NetworkObject>();
         InstanceFinder.ServerManager.Spawn(nob, conn);
+        nob.GetComponent<ChickPlayerController>().SetNameLabel(_playerConnectionNameDict[conn]);
     }
 
     public Transform GetCapturedChickSpawn()

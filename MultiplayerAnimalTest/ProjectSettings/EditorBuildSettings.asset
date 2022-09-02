@@ -11,7 +11,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TestFarmScene.unity
     guid: 18fc6fc1ba0d34845935fca41873fd1d
-  - enabled: 0
-    path: Assets/Scenes/Testing.unity
-    guid: 409511d465c1ab149979a9e026528767
   m_configObjects: {}

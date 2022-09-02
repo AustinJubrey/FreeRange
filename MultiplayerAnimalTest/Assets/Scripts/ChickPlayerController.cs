@@ -1,13 +1,21 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using FishNet;
 using FishNet.Connection;
 using FishNet.Example.Prediction.CharacterControllers;
 using FishNet.Object;
+using TMPro;
 using UnityEngine;
 
 public class ChickPlayerController : NetworkBehaviour
 {
+    [SerializeField]
+    private TextMeshProUGUI _nameLabel;
+    
+    [SerializeField]
+    private Camera _camera;
+    
     private CharacterControllerPrediction _characterPrediction;
     private PlayerInventory _inventory;
     private PlayerAnimatorHelper _animatorHelper;
@@ -23,6 +31,11 @@ public class ChickPlayerController : NetworkBehaviour
         _animatorHelper = GetComponent<PlayerAnimatorHelper>();
     }
 
+    private void Start()
+    {
+        PiersEvent.Post(PiersEventKey.EventKey.CameraTargetBroadcast, _camera);
+    }
+
     private void Update()
     {
         if (!_canEquip)
@@ -34,6 +47,11 @@ public class ChickPlayerController : NetworkBehaviour
                 _canEquip = true;
             }
         }
+    }
+
+    public Camera GetCamera()
+    {
+        return _camera;
     }
 
     public void EquipPickUp(string pickupID)
@@ -50,6 +68,13 @@ public class ChickPlayerController : NetworkBehaviour
 
             OnEquip();
         }
+    }
+    
+    [ObserversRpc]
+    public void SetNameLabel(string name)
+    {
+        _nameLabel.text = name;
+        Debug.Log("set name to " + name);
     }
 
     private void OnEquip()

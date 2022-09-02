@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using FishNet;
 using FishNet.Connection;
 using FishNet.Managing.Scened;
@@ -97,7 +99,27 @@ public class LobbyController : NetworkBehaviour
     {
         SceneLoadData sld = new SceneLoadData("TestFarmScene");
         sld.ReplaceScenes = ReplaceOption.All;
+        sld.Params.ClientParams = SerializePlayerNames();
         InstanceFinder.SceneManager.LoadGlobalScenes(sld);
+    }
+
+    private Dictionary<int, string> GetPlayerDictionaryForSerialization()
+    {
+        var newDict = new Dictionary<int, string>();
+        foreach (var player in _playerNames)
+        {
+            newDict.Add(player.Key.ClientId, player.Value);
+        }
+
+        return newDict;
+    }
+
+    private byte[] SerializePlayerNames()
+    {
+        var binFormatter = new BinaryFormatter();
+        var memoryStream = new MemoryStream();
+        binFormatter.Serialize(memoryStream, GetPlayerDictionaryForSerialization());
+        return memoryStream.ToArray();
     }
 
     private void UpdatePlayerList()

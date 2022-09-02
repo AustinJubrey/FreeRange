@@ -8,6 +8,7 @@ public class PiersEventKey : MonoBehaviour
         ClientJoined,
         ClientExited,
         PlayerCacheUpdated,
+        CameraTargetBroadcast,
     }
 
     [Serializable]
