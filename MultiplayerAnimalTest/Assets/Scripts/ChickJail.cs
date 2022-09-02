@@ -28,11 +28,8 @@ public class ChickJail : NetworkBehaviour
 
     public void OpenDoor()
     {
-        Debug.Log("open door");
         if (!IsServer || _doorOpen)
             return;
-        
-        Debug.Log("open door setting bool");
         
         _animator.SetBool("DoorOpen", true);
         _doorOpen = true;

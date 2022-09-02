@@ -39,6 +39,13 @@ public class FarmerController : NetworkBehaviour
             DropItem();
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    public void RecoverFromDowned()
+    {
+        _isDowned = false;
+        _navController.RecoverFromDowned();
+    }
+
     private void DropItem()
     {
         Debug.Log("dropping item");

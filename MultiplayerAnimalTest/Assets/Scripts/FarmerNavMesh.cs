@@ -43,6 +43,9 @@ public class FarmerNavMesh : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (_isDowned)
+            return;
+        
         HandleMovement();
 
         if (!_isChasingTarget)
@@ -82,8 +85,16 @@ public class FarmerNavMesh : NetworkBehaviour
             OnStopChasing();
         
         _animator.SetBool("IsWalking", false);
+        _animator.SetBool("IsDowned", true);
         
         _navMeshAgent.ResetPath();
+    }
+
+    public void RecoverFromDowned()
+    {
+        _isDowned = false;
+        _animator.SetBool("IsDowned", false);
+        _targetTransform = _targetList[_targetIndex].transform;
     }
 
     private void HandleMovement()

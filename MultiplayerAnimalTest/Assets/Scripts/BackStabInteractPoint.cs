@@ -19,11 +19,26 @@ public class BackStabInteractPoint : NetworkBehaviour
     [SyncVar]
     private Transform _nearbyPlayer;
 
+    private bool _hasBeenDownedRecently;
+    private float _downedCount = 0;
+    private float _downedImmunityTime = 45;
+
     private void Update()
     {
-        if (_playerWithinRange && Input.GetKey(KeyCode.E) && _nearbyPlayer != null)
+        if (_hasBeenDownedRecently)
         {
-            Debug.Log("backstabbing");
+            _downedCount += Time.deltaTime;
+
+            if (_downedCount >= _downedImmunityTime)
+            {
+                _downedCount = 0;
+                _hasBeenDownedRecently = false;
+                //there could be other behaviour than just getting back up, depending on the item used to down, or something
+                _farmerController.RecoverFromDowned();
+            }
+        }
+        else if (_playerWithinRange && Input.GetKey(KeyCode.E) && _nearbyPlayer != null)
+        {
             OnBackStabInitiated();
         }
     }
@@ -37,6 +52,7 @@ public class BackStabInteractPoint : NetworkBehaviour
     private void DownFarmer()
     {
         _farmerController.GetDowned();
+        _hasBeenDownedRecently = true;
     }
 
     public void SetEnterCallback(UnityAction callback)
