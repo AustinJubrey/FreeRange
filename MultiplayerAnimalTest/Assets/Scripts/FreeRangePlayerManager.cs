@@ -79,6 +79,7 @@ public class FreeRangePlayerManager : NetworkBehaviour
     private void SpawnPlayer(NetworkConnection conn = null)
     {
         NetworkObject nob = Instantiate(_playerPrefab, _playerSpawn.position, _playerSpawn.rotation).GetComponent<NetworkObject>();
+        nob.transform.position = _playerSpawn.position;
         InstanceFinder.ServerManager.Spawn(nob, conn);
         nob.GetComponent<ChickPlayerController>().SetNameLabel(_playerConnectionNameDict[conn]);
     }

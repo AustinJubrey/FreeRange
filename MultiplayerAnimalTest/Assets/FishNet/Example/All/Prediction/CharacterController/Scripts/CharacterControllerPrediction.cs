@@ -23,14 +23,10 @@ namespace FishNet.Example.Prediction.CharacterControllers
         {
             public Vector3 Position;
             public Quaternion Rotation;
-            public Vector3 RigidBodyPosition;
-            public Quaternion rigidBodyRotation;
-            public ReconcileData(Vector3 position, Quaternion rotation, Vector3 rbPosition, Quaternion rbRotation)
+            public ReconcileData(Vector3 position, Quaternion rotation)
             {
                 Position = position;
                 Rotation = rotation;
-                RigidBodyPosition = rbPosition;
-                rigidBodyRotation = rbRotation;
             }
         }
         #endregion
@@ -42,7 +38,6 @@ namespace FishNet.Example.Prediction.CharacterControllers
 
         #region Private.
         private CharacterController _characterController;
-        private Rigidbody _rigidbody;
         private Vector3 _rotationSpeed = new Vector3(0,180,0);
         #endregion
 
@@ -51,7 +46,6 @@ namespace FishNet.Example.Prediction.CharacterControllers
             InstanceFinder.TimeManager.OnTick += TimeManager_OnTick;
             InstanceFinder.TimeManager.OnPostTick += TimeManager_OnPostTick;
             _characterController = GetComponent<CharacterController>();
-            _rigidbody = GetComponent<Rigidbody>();
         }
         
         public CharacterController GetCharacterController()
@@ -83,7 +77,7 @@ namespace FishNet.Example.Prediction.CharacterControllers
 
         private void TimeManager_OnPostTick()
         {
-            ReconcileData rd = new ReconcileData(transform.position, transform.rotation, _rigidbody.position, _rigidbody.rotation);
+            ReconcileData rd = new ReconcileData(transform.position, transform.rotation);
             Reconciliation(rd, true);
         }
 
@@ -108,9 +102,9 @@ namespace FishNet.Example.Prediction.CharacterControllers
         private void Move(MoveData md, bool asServer, bool replaying = false)
         {
             Vector3 move = new Vector3(0f, 0f, md.Vertical).normalized + new Vector3(0f, Physics.gravity.y, 0f);
-            Quaternion deltaRotation = Quaternion.Euler(new Vector3(md.Horizontal, 0f, 0f).normalized.x * _rotationSpeed * (float)TimeManager.TickDelta);
-            _rigidbody.MoveRotation(_rigidbody.rotation * deltaRotation);
-            _characterController.Move(_rigidbody.rotation * move * _moveRate * (float)TimeManager.TickDelta);
+            var rotation = new Vector3(md.Horizontal, 0f, 0f).normalized.x * _rotationSpeed * (float)TimeManager.TickDelta;
+            transform.Rotate(rotation);
+            _characterController.Move(transform.rotation * move * _moveRate * (float)TimeManager.TickDelta);
         }
 
         [Reconcile]
@@ -118,8 +112,6 @@ namespace FishNet.Example.Prediction.CharacterControllers
         {
             transform.position = rd.Position;
             transform.rotation = rd.Rotation;
-            _rigidbody.position = rd.RigidBodyPosition;
-            _rigidbody.rotation = rd.rigidBodyRotation;
         }
     }
 

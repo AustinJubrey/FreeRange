@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using UnityEngine;
@@ -37,7 +34,7 @@ public class BackStabInteractPoint : NetworkBehaviour
                 _farmerController.RecoverFromDowned();
             }
         }
-        else if (_playerWithinRange && Input.GetKey(KeyCode.E) && _nearbyPlayer != null)
+        else if (_playerWithinRange && Input.GetKeyDown(KeyCode.E) && _nearbyPlayer != null)
         {
             OnBackStabInitiated();
         }
@@ -45,6 +42,7 @@ public class BackStabInteractPoint : NetworkBehaviour
     
     private void OnBackStabInitiated()
     {
+        _backStabPointExitCallback?.Invoke();
         _nearbyPlayer.GetComponent<ChickPlayerController>().BackStabFarmer(transform);
         DownFarmer();
     }
@@ -67,6 +65,9 @@ public class BackStabInteractPoint : NetworkBehaviour
     
     private void OnTriggerEnter(Collider other)
     {
+        if (_hasBeenDownedRecently)
+            return;
+        
         var playerController = other.GetComponent<ChickPlayerController>();
         if (playerController != null && playerController.GetEquippedPickUp() == EPickUpID.Knife)
         {
@@ -86,6 +87,9 @@ public class BackStabInteractPoint : NetworkBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+        if (_hasBeenDownedRecently)
+            return;
+        
         var playerController = other.GetComponent<ChickPlayerController>();
         if (playerController != null && playerController.GetEquippedPickUp() == EPickUpID.Knife)
         {

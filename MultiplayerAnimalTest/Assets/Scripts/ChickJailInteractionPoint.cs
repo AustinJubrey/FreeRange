@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using FishNet.Object;
 using UnityEngine;
 
@@ -21,7 +18,7 @@ public class ChickJailInteractionPoint : InteractionPoint
             _doorCooldownCount -= Time.deltaTime;
         }
 
-        if (_doorCooldownCount  <= 0 && Input.GetKey(KeyCode.E))
+        if (_doorCooldownCount  <= 0 && Input.GetKeyDown(KeyCode.E))
         {
             CheckIfShouldOpen();
             _doorCooldownCount = _doorCooldown;
@@ -35,7 +32,6 @@ public class ChickJailInteractionPoint : InteractionPoint
         {
             if (!_hasChecked && DoesNearbyPlayerHaveKey())
             {
-                Debug.Log("conditions met to open jail");
                 _chickJail.OpenDoor();
             }
         }

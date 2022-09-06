@@ -1,5 +1,3 @@
-using System;
-using FishNet.Example.Prediction.CharacterControllers;
 using FishNet.Object;
 using UnityEngine;
 
@@ -20,7 +18,7 @@ public class PickUp : NetworkBehaviour
 
     void Update()
     {
-        if (_playerWithinRange && Input.GetKey(KeyCode.E) && _nearbyPlayer != null)
+        if (_playerWithinRange && Input.GetKeyDown(KeyCode.E) && _nearbyPlayer != null)
         {
             OnCollected();
         }

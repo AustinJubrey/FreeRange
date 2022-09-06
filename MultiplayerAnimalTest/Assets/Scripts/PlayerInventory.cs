@@ -1,9 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using FishNet.Object;
-using FishNet.Object.Synchronizing;
-using FishNet.Serializing;
 using UnityEngine;
 
 public class PlayerInventory : NetworkBehaviour
@@ -61,7 +57,6 @@ public class PlayerInventory : NetworkBehaviour
     public void DropEquippedItem()
     {
         GameObject droppedItem = null;
-        Debug.Log("dropping item");
 
         switch (_equippedItem)
         {
