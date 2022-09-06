@@ -23,10 +23,14 @@ namespace FishNet.Example.Prediction.CharacterControllers
         {
             public Vector3 Position;
             public Quaternion Rotation;
-            public ReconcileData(Vector3 position, Quaternion rotation)
+            public Vector3 RigidBodyPosition;
+            public Quaternion rigidBodyRotation;
+            public ReconcileData(Vector3 position, Quaternion rotation, Vector3 rbPosition, Quaternion rbRotation)
             {
                 Position = position;
                 Rotation = rotation;
+                RigidBodyPosition = rbPosition;
+                rigidBodyRotation = rbRotation;
             }
         }
         #endregion
@@ -79,11 +83,8 @@ namespace FishNet.Example.Prediction.CharacterControllers
 
         private void TimeManager_OnPostTick()
         {
-            if (IsServer)
-            {
-                ReconcileData rd = new ReconcileData(transform.position, transform.rotation);
-                Reconciliation(rd, true);
-            }
+            ReconcileData rd = new ReconcileData(transform.position, transform.rotation, _rigidbody.position, _rigidbody.rotation);
+            Reconciliation(rd, true);
         }
 
         private void CheckInput(out MoveData md)
@@ -117,6 +118,8 @@ namespace FishNet.Example.Prediction.CharacterControllers
         {
             transform.position = rd.Position;
             transform.rotation = rd.Rotation;
+            _rigidbody.position = rd.RigidBodyPosition;
+            _rigidbody.rotation = rd.rigidBodyRotation;
         }
     }
 

@@ -1,21 +1,24 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using FishNet;
+using FishNet.Object;
 using UnityEngine;
 
-public class LookAtCamera : MonoBehaviour
+public class LookAtCamera : NetworkBehaviour
 {
     private Camera _camera;
 
-    private void Awake()
+    private void Start()
     {
-        PiersEvent.Listen<Camera>(PiersEventKey.EventKey.CameraTargetBroadcast, OnClientJoined);
+        if(Owner.IsLocalClient)
+            gameObject.SetActive(false);
+        else
+            FindLocalPlayerCamera();
     }
 
-    private void OnClientJoined(Camera camera)
+    private void FindLocalPlayerCamera()
     {
-        _camera = camera;
+        _camera = Camera.main;
+        
+        //_camera = FreeRangePlayerManager.Instance.GetPlayerInfo(LocalConnection).playerObject
+        //.GetComponent<ChickPlayerController>().GetCamera();
     }
 
     // Update is called once per frame

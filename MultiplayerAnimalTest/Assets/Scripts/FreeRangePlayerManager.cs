@@ -5,6 +5,13 @@ using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using UnityEngine;
 
+public struct PlayerInfo
+{
+    public NetworkConnection Connection;
+    public string Name;
+    public Transform playerObject;
+}
+
 public class FreeRangePlayerManager : NetworkBehaviour
 {
     [SyncVar]
@@ -17,7 +24,7 @@ public class FreeRangePlayerManager : NetworkBehaviour
     [SerializeField]
     private Transform _playerSpawn;
     
-    private List<NetworkConnection> _playerConnections;
+    private List<PlayerInfo> _playerInfo;
     
     private Dictionary<NetworkConnection, string> _playerConnectionNameDict =
         new Dictionary<NetworkConnection, string>();
@@ -37,8 +44,8 @@ public class FreeRangePlayerManager : NetworkBehaviour
             _instance = this;
         }
         
-        _playerConnections = new List<NetworkConnection>();
-        RefreshPlayerConnections();
+        _playerInfo = new List<PlayerInfo>();
+        UpdatePlayerInfo();
 
         Listen();
     }
@@ -57,11 +64,6 @@ public class FreeRangePlayerManager : NetworkBehaviour
         }
     }
 
-    public Dictionary<NetworkConnection, string> GetConnectionNameDictionary()
-    {
-        return _playerConnectionNameDict;
-    }
-
     public void SetPlayerDataFromLobby(Dictionary<int, string> nameDict)
     {
         if (!IsServer)
@@ -70,7 +72,6 @@ public class FreeRangePlayerManager : NetworkBehaviour
         foreach (var entry in InstanceFinder.ServerManager.Clients)
         {
             _playerConnectionNameDict.Add(entry.Value, nameDict[entry.Value.ClientId]);
-            Debug.Log(entry.Value);
         }
     }
 
@@ -87,22 +88,37 @@ public class FreeRangePlayerManager : NetworkBehaviour
         return _capturedChickSpawn;
     }
 
-    private void RefreshPlayerConnections()
+    private void UpdatePlayerInfo()
     {
         if (!IsServer)
             return;
         
-        _playerConnections = new List<NetworkConnection>();
-        
         foreach (var conn in InstanceFinder.ServerManager.Clients)
         {
-            _playerConnections.Add(conn.Value);
+            var foundInfo = _playerInfo.Find(x => x.Connection == conn.Value);
+            if (foundInfo.Name == null)
+            {
+                // Properties
+                foundInfo.Connection = conn.Value;
+                foundInfo.Name = _playerConnectionNameDict[conn.Value];
+            
+                var firstObject = conn.Value.FirstObject;
+                if (firstObject != null)
+                    foundInfo.playerObject = firstObject.transform;
+            
+                _playerInfo.Add(foundInfo);
+            }
         }
+    }
+
+    public PlayerInfo GetPlayerInfo(NetworkConnection conn)
+    {
+        return _playerInfo.Find(x => x.Connection == conn);
     }
     
     private void RefreshPlayerConnectionsAndBroadcast()
     {
-        RefreshPlayerConnections();
+        UpdatePlayerInfo();
         PiersEvent.Post(PiersEventKey.EventKey.PlayerCacheUpdated, GetPlayerTransforms());
     }
 
@@ -110,25 +126,17 @@ public class FreeRangePlayerManager : NetworkBehaviour
     {
         List<Transform> playerTransforms = new List<Transform>();
 
-        foreach (var conn in _playerConnections)
+        foreach (var info in _playerInfo)
         {
-            if (conn.Objects == null || conn.Objects.Count == 0)
+            if (info.playerObject == null)
             {
-                //Debug.Log("connection had nothing in its objects list");
+                Debug.Log("connection had nothing in its objects list");
             }
-
-            var firstObject = conn.FirstObject;
-            if(firstObject != null)
-                playerTransforms.Add(firstObject.transform);
-            //else
-                //Debug.Log("player connection had a null first object");
+            
+            if(info.playerObject != null)
+                playerTransforms.Add(info.playerObject);
         }
 
         return playerTransforms;
-    }
-
-    public int GetAmountOfPlayers()
-    {
-        return _playerConnections.Count;
     }
 }

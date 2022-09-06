@@ -1,8 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using FishNet;
-using FishNet.Connection;
 using FishNet.Example.Prediction.CharacterControllers;
 using FishNet.Object;
 using TMPro;

@@ -9,7 +9,7 @@ public class ChickJailInteractionPoint : InteractionPoint
     [SerializeField]
     private ChickJail _chickJail;
 
-    private bool _haschecked;
+    private bool _hasChecked;
     private float _doorCooldown = 1f;
     private float _doorCooldownCount = 0;
     
@@ -33,7 +33,7 @@ public class ChickJailInteractionPoint : InteractionPoint
     {
         if (_nearbyPlayers.Count > 0)
         {
-            if (!_haschecked && DoesNearbyPlayerHaveKey())
+            if (!_hasChecked && DoesNearbyPlayerHaveKey())
             {
                 Debug.Log("conditions met to open jail");
                 _chickJail.OpenDoor();
@@ -43,7 +43,7 @@ public class ChickJailInteractionPoint : InteractionPoint
 
     private bool DoesNearbyPlayerHaveKey()
     {
-        _haschecked = true;
+        _hasChecked = true;
         foreach (var playerTransform in _nearbyPlayers)
         {
             var chickController = playerTransform.GetComponent<ChickPlayerController>();

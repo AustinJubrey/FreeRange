@@ -383,6 +383,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a05999493fac4014789582cff14a7f3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 8
+  _addedNetworkObject: {fileID: 1574619281779523453}
+  _networkObjectCache: {fileID: 1574619281779523453}
 --- !u!114 &1257684655582705342
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -395,9 +398,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 9
   _addedNetworkObject: {fileID: 1574619281779523453}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 1574619281779523453}
   _synchronizeParent: 0
   _packing:
     Position: 1
@@ -925,6 +928,8 @@ MonoBehaviour:
   - {fileID: 8386442879053965774}
   - {fileID: 2187877846608244287}
   - {fileID: 153862651685285923}
+  - {fileID: 2856286628975021638}
+  - {fileID: 1257684655582705342}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField:
   - {fileID: 7332321464508753933}
@@ -1082,7 +1087,7 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 1574619281779523453}
   _networkObjectCache: {fileID: 1574619281779523453}
   _nameLabel: {fileID: 4603696441627172889}
-  _camera: {fileID: 0}
+  _camera: {fileID: 1282359305350125230}
 --- !u!143 &4674442458954858482
 CharacterController:
   m_ObjectHideFlags: 0

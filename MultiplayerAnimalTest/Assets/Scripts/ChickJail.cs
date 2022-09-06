@@ -18,8 +18,6 @@ public class ChickJail : NetworkBehaviour
     [SyncVar]
     private bool _doorOpen;
 
-    private bool _isLightActive;
-
     private void Start()
     {
         _interactionPoint.SetEnterCallback(OnOpenDoorAvailable);
@@ -48,13 +46,11 @@ public class ChickJail : NetworkBehaviour
     private void OnOpenDoorAvailable()
     {
         _interactionLight.SetActive(true);
-        _isLightActive = true;
     }
 
     [ObserversRpc]
     private void OnOpenDoorNoLongerAvailable()
     {
         _interactionLight.SetActive(false);
-        _isLightActive = false;
     }
 }

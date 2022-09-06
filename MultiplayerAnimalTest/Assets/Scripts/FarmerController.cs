@@ -6,7 +6,6 @@ public class FarmerController : NetworkBehaviour
 {
     private FarmerNavMesh _navController;
 
-    private bool _ankleLightActive;
     private bool _isDowned;
     
     [SerializeField]
@@ -62,15 +61,12 @@ public class FarmerController : NetworkBehaviour
     private void OnBackStabAvailable()
     {
         _ankleLight.SetActive(true);
-        //Spawn(_ankleLight); // this would be whatsup if the light had a network object component
-        _ankleLightActive = true;
     }
 
     [ObserversRpc]
     private void OnBackStabNoLongerAvailable()
     {
         _ankleLight.SetActive(false);
-        _ankleLightActive = false;
     }
 
     private void OnPlayerCacheUpdated(List<Transform> transforms)
