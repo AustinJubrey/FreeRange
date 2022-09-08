@@ -18,6 +18,11 @@ public class ChickPlayerController : NetworkBehaviour
     private float _equipCooldown = 1f;
     private float _equipCooldownCounter;
     private bool _canEquip = true;
+    
+    // Foot Steps
+    private float _footStepCount;
+    private float _normalFootStepTime = 0.35f;
+    private float _maxFootStepTime;
 
     private void Awake()
     {
@@ -33,6 +38,8 @@ public class ChickPlayerController : NetworkBehaviour
 
     private void Update()
     {
+        HandleFootStepAudio();
+        
         if (!_canEquip)
         {
             _equipCooldownCounter -= Time.deltaTime;
@@ -42,6 +49,30 @@ public class ChickPlayerController : NetworkBehaviour
                 _canEquip = true;
             }
         }
+    }
+    
+    private void HandleFootStepAudio()
+    {
+        float vertical = Input.GetAxisRaw("Vertical");
+        
+        if (vertical == 0)
+            return;
+
+        if (_footStepCount < _maxFootStepTime)
+        {
+            _footStepCount += Time.deltaTime;
+        }
+        else
+        {
+            OnFootStep();
+            _maxFootStepTime = _normalFootStepTime;
+            _footStepCount = 0;
+        }
+    }
+
+    private void OnFootStep()
+    {
+        AudioUtilityManager.Instance.PlaySound(transform, transform.position, AudioTrackTypes.PlayerFootStepsGrass.ToString());
     }
 
     public Camera GetCamera()

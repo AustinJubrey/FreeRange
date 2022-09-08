@@ -26,12 +26,15 @@ public class FarmerNavMesh : NetworkBehaviour
     private bool _isDowned;
 
     private float _chaseCaptureDistance = 2f;
-
     private float _fieldOfViewAngle = 30f;
     private float _chaseFieldOfViewAngle = 60f;
-
     private float _lostChaseCount;
     private float _lostChaseTimer = 5f;
+    
+    // Foot Steps
+    private float _footStepCount;
+    private float _normalFootStepTime = 0.35f;
+    private float _maxFootStepTime;
     
     void Awake()
     {
@@ -47,6 +50,7 @@ public class FarmerNavMesh : NetworkBehaviour
             return;
         
         HandleMovement();
+        HandleFootStepAudio();
 
         if (!_isChasingTarget)
         {
@@ -71,6 +75,28 @@ public class FarmerNavMesh : NetworkBehaviour
             else if (_lostChaseCount > 0)
                 _lostChaseCount = 0;
         }
+    }
+
+    private void HandleFootStepAudio()
+    {
+        if (!_isWalking && !_isRunning)
+            return;
+
+        if (_footStepCount < _maxFootStepTime)
+        {
+            _footStepCount += Time.deltaTime;
+        }
+        else
+        {
+            OnFootStep();
+            _maxFootStepTime = _isRunning ? 0.25f : _normalFootStepTime;
+            _footStepCount = 0;
+        }
+    }
+
+    private void OnFootStep()
+    {
+        AudioUtilityManager.Instance.PlaySound(transform, transform.position, AudioTrackTypes.FarmerFootStepsDirt.ToString());
     }
 
     public void GetDowned()
@@ -147,6 +173,7 @@ public class FarmerNavMesh : NetworkBehaviour
     {
         _isRunning = true;
         _animator.SetBool("IsRunning", true);
+        AudioUtilityManager.Instance.PlaySound(transform, transform.position, AudioTrackTypes.FarmerNoticedPlayerSound.ToString());
     }
     
     private void OnStopChasing()

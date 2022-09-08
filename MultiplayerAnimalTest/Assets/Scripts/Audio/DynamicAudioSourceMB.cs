@@ -32,6 +32,11 @@ public class DynamicAudioSourceMB : MonoBehaviour {
         _audioSource.volume = GetScaledVolume();
         _audioSource.spatialBlend = _audioTrack.GetSpatialBlend();
         _audioSource.loop = _audioTrack.GetLoop();
+        
+        // This makes the volume dropOff use the audio track's volume as the max, instead of always using 1 regardless of the track's volume
+        var newSoundCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0, _audioTrack.GetVolume()), new Keyframe(1, 0) });
+        
+        _audioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, newSoundCurve);
 
         _isInitialized = true;
         Play();

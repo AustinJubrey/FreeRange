@@ -4,6 +4,7 @@ public class TrackLibrary : MonoBehaviour
 {
     [SerializeField] private AudioTrack _farmerNoticedPlayer_01;
     [SerializeField] private AudioTrack _farmerFootStepsDirt_01;
+    [SerializeField] private AudioTrack _playerFootStepGrass_01;
 
     public AudioTrack GetTrackByType(AudioTrackTypes type)
     {
@@ -13,6 +14,8 @@ public class TrackLibrary : MonoBehaviour
                 return _farmerNoticedPlayer_01;
             case AudioTrackTypes.FarmerFootStepsDirt:
                 return _farmerFootStepsDirt_01;
+            case AudioTrackTypes.PlayerFootStepsGrass:
+                return _playerFootStepGrass_01;
         }
 
         return null;
