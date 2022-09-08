@@ -32,6 +32,8 @@ public class LobbyController : NetworkBehaviour
 
     private bool _isReady;
 
+    private bool _hasSetName;
+
     public override void OnStartClient()
     {
         base.OnStartClient();
@@ -54,11 +56,15 @@ public class LobbyController : NetworkBehaviour
 
     public void OnConfirmName()
     {
+        if (_nameField.text != "")
+            _hasSetName = true;
         UpdateDictionary(_nameField.text);
     }
     
     public void OnReadyButton()
     {
+        if (!_hasSetName)
+            return;
         _isReady = !_isReady;
         _readyButtonLabel.color = _isReady ? new Color32(0,254,111,255) : new Color32(254,9,0,255);
         UpdateReadinessDictionary(_isReady);
