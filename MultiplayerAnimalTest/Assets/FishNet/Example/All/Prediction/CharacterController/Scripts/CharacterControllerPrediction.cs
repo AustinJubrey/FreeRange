@@ -77,6 +77,9 @@ namespace FishNet.Example.Prediction.CharacterControllers
 
         private void TimeManager_OnPostTick()
         {
+            if (transform == null)
+                return;
+            
             ReconcileData rd = new ReconcileData(transform.position, transform.rotation);
             Reconciliation(rd, true);
         }

@@ -309,6 +309,12 @@ MonoBehaviour:
   _collider: {fileID: 4454769615155243593}
   _interactPrompt: {fileID: 9215175486168984058}
   _pickUpData: {fileID: 11400000, guid: f62bc59dbe4d00142ab08ed934b62a04, type: 2}
+  _pickupSound:
+    m_clip: {fileID: 8300000, guid: f6c3c767628c3524baac0517c87fe073, type: 3}
+    m_volume: 0.5
+    m_spatialBlend: 0
+    m_loop: 0
+    m_isMusic: 0
 --- !u!54 &954761824998272552
 Rigidbody:
   m_ObjectHideFlags: 0

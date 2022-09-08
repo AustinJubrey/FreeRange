@@ -191,10 +191,10 @@ public class FarmerNavMesh : NetworkBehaviour
 
     private Transform CanSeePlayer()
     {
-        if (_targetPlayers.Count == 0)
+        if (_targetPlayers == null || _targetPlayers.Count == 0)
             return null;
 
-        List<Transform> transformsToDelete = new List<Transform>();
+        var transformsToDelete = new List<Transform>();
 
         foreach (var player in _targetPlayers)
         {
@@ -204,9 +204,9 @@ public class FarmerNavMesh : NetworkBehaviour
                 continue;
             }
 
-            Vector3 targetDir = player.position - transform.position;
-            float angle = Vector3.Angle(targetDir, transform.forward);
-
+            var targetDir = new Vector3(player.position.x, player.position.y + 0.5f, player.position.z) - transform.position;
+            var angle = Vector3.Angle(targetDir, transform.forward);
+            
             if (angle < _fieldOfViewAngle)
             {
                 RemoveNullPlayersFromList(transformsToDelete);
@@ -235,8 +235,8 @@ public class FarmerNavMesh : NetworkBehaviour
         if (_chaseTarget == null)
             return false;
         
-        Vector3 targetDir = _chaseTarget.position - transform.position;
-        float angle = Vector3.Angle(targetDir, transform.forward);
+        var targetDir = new Vector3(_chaseTarget.position.x, _chaseTarget.position.y + 0.5f, _chaseTarget.position.z) - transform.position;
+        var angle = Vector3.Angle(targetDir, transform.forward);
 
         if (angle < _chaseFieldOfViewAngle)
         {
@@ -250,7 +250,6 @@ public class FarmerNavMesh : NetworkBehaviour
     {
         var hit = new RaycastHit();
         Physics.Raycast(transform.position, playerDirection, out hit);
-        Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.green);
 
         if (hit.transform.GetComponent<CharacterControllerPrediction>() != null)
         {

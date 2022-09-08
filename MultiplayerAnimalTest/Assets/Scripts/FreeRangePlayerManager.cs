@@ -22,8 +22,9 @@ public class FreeRangePlayerManager : NetworkBehaviour
     private GameObject _playerPrefab;
     
     [SerializeField]
-    private Transform _playerSpawn;
-    
+    private List<Transform> _playerSpawns;
+
+    private int _spawnIndex;
     private List<PlayerInfo> _playerInfo;
     
     private Dictionary<NetworkConnection, string> _playerConnectionNameDict =
@@ -78,10 +79,15 @@ public class FreeRangePlayerManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void SpawnPlayer(NetworkConnection conn = null)
     {
-        NetworkObject nob = Instantiate(_playerPrefab, _playerSpawn.position, _playerSpawn.rotation).GetComponent<NetworkObject>();
-        nob.transform.position = _playerSpawn.position;
+        if (_spawnIndex >= _playerSpawns.Count)
+            _spawnIndex = 0;
+        
+        NetworkObject nob = Instantiate(_playerPrefab, _playerSpawns[_spawnIndex].position, _playerSpawns[_spawnIndex].rotation).GetComponent<NetworkObject>();
+        nob.transform.position = _playerSpawns[_spawnIndex].position;
         InstanceFinder.ServerManager.Spawn(nob, conn);
         nob.GetComponent<ChickPlayerController>().SetNameLabel(_playerConnectionNameDict[conn]);
+
+        ++_spawnIndex;
     }
 
     public Transform GetCapturedChickSpawn()
@@ -105,7 +111,13 @@ public class FreeRangePlayerManager : NetworkBehaviour
             
                 var firstObject = conn.Value.FirstObject;
                 if (firstObject != null)
+                {
                     foundInfo.playerObject = firstObject.transform;
+                }
+                else
+                {
+                    Debug.Log("couldnt find player object");
+                }
             
                 _playerInfo.Add(foundInfo);
             }

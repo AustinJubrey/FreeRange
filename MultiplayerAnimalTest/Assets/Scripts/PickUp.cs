@@ -11,6 +11,9 @@ public class PickUp : NetworkBehaviour
     
     [SerializeField]
     private PickUpData _pickUpData;
+    
+    [SerializeField]
+    private AudioTrack _pickupSound;
 
     private bool _playerWithinRange;
 
@@ -28,7 +31,18 @@ public class PickUp : NetworkBehaviour
     private void OnCollected()
     {
         _nearbyPlayer.EquipPickUp(_pickUpData._id.ToString());
+        PlayCollectedSound();
         Despawn();
+    }
+
+    [ObserversRpc]
+    private void PlayCollectedSound()
+    {
+        GameObject dynamicSourceGameObject = Instantiate(AudioUtilityManager.Instance.GetAudioSourcePrefab());
+        dynamicSourceGameObject.transform.SetParent(null);
+        DynamicAudioSourceMB dynamicSource = dynamicSourceGameObject.GetComponent<DynamicAudioSourceMB>();
+        dynamicSource.SetAudioTrack(_pickupSound);
+            
     }
 
     private void OnTriggerEnter(Collider other)
