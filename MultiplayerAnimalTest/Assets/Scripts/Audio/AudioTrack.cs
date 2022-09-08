@@ -16,7 +16,7 @@ public class AudioTrack
     // Possible to make it something in between, but should ideally be completely 2D or completely 3D
     [SerializeField]
     [Range(0.0f, 1.0f)]
-    private float m_spatialBlend = 0.0f;
+    private float m_spatialBlend = 1.0f;
 
     [SerializeField]
 	private bool m_loop = false;

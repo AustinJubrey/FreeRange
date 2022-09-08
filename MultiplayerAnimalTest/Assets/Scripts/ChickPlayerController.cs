@@ -72,7 +72,17 @@ public class ChickPlayerController : NetworkBehaviour
 
     private void OnFootStep()
     {
-        AudioUtilityManager.Instance.PlaySound(transform, transform.position, AudioTrackTypes.PlayerFootStepsGrass.ToString());
+        var soundToUse = Random.Range(0, 3);
+
+        var track = soundToUse switch
+        {
+            0 => AudioTrackTypes.PlayerFootStepsGrass01,
+            1 => AudioTrackTypes.PlayerFootStepsGrass02,
+            2 => AudioTrackTypes.PlayerFootStepsGrass03,
+            _ => AudioTrackTypes.PlayerFootStepsGrass01
+        };
+
+        AudioUtilityManager.Instance.PlaySound(transform, transform.position, track.ToString());
     }
 
     public Camera GetCamera()

@@ -35,12 +35,17 @@ public class FarmerNavMesh : NetworkBehaviour
     private float _footStepCount;
     private float _normalFootStepTime = 0.35f;
     private float _maxFootStepTime;
+
+    private float _defaultSpeed;
+    private float _chaseSpeed;
     
     void Awake()
     {
         _targetPlayers = new List<Transform>();
         _navMeshAgent = GetComponent<NavMeshAgent>();
         _targetTransform = _targetList[_targetIndex].transform;
+        _defaultSpeed = _navMeshAgent.speed;
+        _chaseSpeed = _defaultSpeed * 1.5f;
     }
 
     // Update is called once per frame
@@ -96,7 +101,16 @@ public class FarmerNavMesh : NetworkBehaviour
 
     private void OnFootStep()
     {
-        AudioUtilityManager.Instance.PlaySound(transform, transform.position, AudioTrackTypes.FarmerFootStepsDirt.ToString());
+        var soundToUse = Random.Range(0, 2);
+
+        var track = soundToUse switch
+        {
+            0 => AudioTrackTypes.FarmerFootStepsDirt01,
+            1 => AudioTrackTypes.FarmerFootStepsDirt02,
+            _ => AudioTrackTypes.FarmerFootStepsDirt01
+        };
+
+        AudioUtilityManager.Instance.PlaySound(transform, transform.position, track.ToString());
     }
 
     public void GetDowned()
@@ -171,6 +185,7 @@ public class FarmerNavMesh : NetworkBehaviour
 
     private void OnStartChasing()
     {
+        _navMeshAgent.speed = _chaseSpeed;
         _isRunning = true;
         _animator.SetBool("IsRunning", true);
         AudioUtilityManager.Instance.PlaySound(transform, transform.position, AudioTrackTypes.FarmerNoticedPlayerSound.ToString());
@@ -178,6 +193,7 @@ public class FarmerNavMesh : NetworkBehaviour
     
     private void OnStopChasing()
     {
+        _navMeshAgent.speed = _defaultSpeed;
         _chaseTarget = null;
         _isRunning = false;
         _isChasingTarget = false;

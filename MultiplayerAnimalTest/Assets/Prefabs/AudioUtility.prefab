@@ -1,0 +1,140 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &833119026945996493
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 833119026945996489}
+  - component: {fileID: 833119026945996488}
+  - component: {fileID: 833119026945996494}
+  - component: {fileID: 833119026945996490}
+  m_Layer: 0
+  m_Name: AudioUtility
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &833119026945996489
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 833119026945996493}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 29.85865, y: 1.8091507, z: -0.20509195}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &833119026945996488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 833119026945996493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31d248906ae8f4643a4e2080eb7e9eec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 833119026945996490}
+  _networkObjectCache: {fileID: 833119026945996490}
+  _audioSourcePrefab: {fileID: 729234859829454092, guid: 652e341757c24874ab2c7ffab51fcdfa, type: 3}
+  _trackLibrary: {fileID: 833119026945996494}
+--- !u!114 &833119026945996494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 833119026945996493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b427d385957c6aa439a3954ae6f6d84f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _farmerNoticedPlayer_01:
+    m_clip: {fileID: 8300000, guid: f706b580eb83a1d42ad1de93efa4bd95, type: 3}
+    m_volume: 1
+    m_spatialBlend: 1
+    m_loop: 0
+    m_isMusic: 0
+  _farmerFootStepsDirt_01:
+    m_clip: {fileID: 8300000, guid: 8dec6c1493a529545877ed97e172d25f, type: 3}
+    m_volume: 0.4
+    m_spatialBlend: 1
+    m_loop: 0
+    m_isMusic: 0
+  _farmerFootStepsDirt_02:
+    m_clip: {fileID: 8300000, guid: c91d428fd2b46e14a8c3fe464a50c4f0, type: 3}
+    m_volume: 0.4
+    m_spatialBlend: 1
+    m_loop: 0
+    m_isMusic: 0
+  _playerFootStepGrass_01:
+    m_clip: {fileID: 8300000, guid: ff3a7606601103844b97bade9c37146f, type: 3}
+    m_volume: 0.125
+    m_spatialBlend: 1
+    m_loop: 0
+    m_isMusic: 0
+  _playerFootStepGrass_02:
+    m_clip: {fileID: 8300000, guid: 192937dcf859c7a41b5d9e310e08cd90, type: 3}
+    m_volume: 0.125
+    m_spatialBlend: 1
+    m_loop: 0
+    m_isMusic: 0
+  _playerFootStepGrass_03:
+    m_clip: {fileID: 8300000, guid: 83f60288f2005ab4c91b91d2bf1159bb, type: 3}
+    m_volume: 0.125
+    m_spatialBlend: 1
+    m_loop: 0
+    m_isMusic: 0
+--- !u!114 &833119026945996490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 833119026945996493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <IsNested>k__BackingField: 0
+  <ComponentIndex>k__BackingField: 0
+  _networkBehaviours:
+  - {fileID: 833119026945996488}
+  <ParentNetworkObject>k__BackingField: {fileID: 0}
+  <ChildNetworkObjects>k__BackingField: []
+  _isNetworked: 1
+  _isGlobal: 0
+  _disableOnDespawn: 0
+  NetworkObserver: {fileID: 0}
+  <PrefabId>k__BackingField: -1
+  _scenePathHash: 0
+  <SceneId>k__BackingField: 0
+  <AssetPathHash>k__BackingField: 17221828753538862135
+  _sceneNetworkObjects:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 833119026945996490}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
