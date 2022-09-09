@@ -5,8 +5,6 @@ using UnityEngine;
 public class FarmerController : NetworkBehaviour
 {
     private FarmerNavMesh _navController;
-
-    private bool _isDowned;
     
     [SerializeField]
     private BackStabInteractPoint _backStabPoint;
@@ -31,7 +29,6 @@ public class FarmerController : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void GetDowned()
     {
-        _isDowned = true;
         _navController.GetDowned();
         
         if(!_hasDroppedItem)
@@ -41,13 +38,11 @@ public class FarmerController : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void RecoverFromDowned()
     {
-        _isDowned = false;
         _navController.RecoverFromDowned();
     }
 
     private void DropItem()
     {
-        Debug.Log("dropping item");
         if (_dropItem == null)
             return;
 

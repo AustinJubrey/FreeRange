@@ -1,8 +1,4 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using FishNet;
 using FishNet.Object;
 using UnityEngine;
 
@@ -42,7 +38,6 @@ public class EscapePoint : NetworkBehaviour
             {
                 if (CheckWinConditions())
                 {
-                    Debug.Log("Players Win!");
                     PiersEvent.Post(PiersEventKey.EventKey.PlayersWin);
                     _gameOverTriggered = true;
                 }
@@ -81,8 +76,6 @@ public class EscapePoint : NetworkBehaviour
                 return;
             
             _presentPlayerIds.Add(networkObject.Owner.ClientId);
-                
-            Debug.Log(_presentPlayerIds.Count + " / " + _maxPlayers);
         }
     }
 

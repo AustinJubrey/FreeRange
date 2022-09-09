@@ -96,7 +96,7 @@ public class ChickPlayerController : NetworkBehaviour
         {
             if (_inventory.GetEquippedItem() != EPickUpID.Nothing)
             {
-                Debug.Log("picking up with something in hand, dropping item");
+                // picking up with something in hand, dropping item
                 _inventory.DropEquippedItem();
             }
 
@@ -110,7 +110,6 @@ public class ChickPlayerController : NetworkBehaviour
     public void SetNameLabel(string name)
     {
         _nameLabel.text = name;
-        Debug.Log("set name to " + name);
     }
 
     private void OnEquip()

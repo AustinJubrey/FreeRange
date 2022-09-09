@@ -31,7 +31,6 @@ public class LobbyController : NetworkBehaviour
     private TextMeshProUGUI _readyButtonLabel;
 
     private bool _isReady;
-
     private bool _hasSetName;
 
     public override void OnStartClient()
@@ -41,6 +40,17 @@ public class LobbyController : NetworkBehaviour
         _playerReadyDict.OnChange += __playerReadyDict_OnChange;
         UpdateReadinessDictionary(_isReady);
         _readyButtonLabel.color = new Color32(254,9,0,255);
+        Reinitialize();
+    }
+
+    // For setting things up after returning from a game
+    private void Reinitialize()
+    {
+        if (_playerNames.Count > 0 && _playerNames[LocalConnection] != null && _playerNames[LocalConnection] != "")
+        {
+            _hasSetName = true;
+            _nameField.text = _playerNames[LocalConnection];
+        }
     }
 
     private void __playerReadyDict_OnChange(SyncDictionaryOperation op, NetworkConnection key, bool value, bool asServer)
@@ -62,9 +72,6 @@ public class LobbyController : NetworkBehaviour
     
     public void OnReadyButton()
     {
-        if (_playerNames[LocalConnection] != "" && _playerNames[LocalConnection] != null)
-            _hasSetName = true;
-        
         if (!_hasSetName)
             return;
         _isReady = !_isReady;
@@ -156,7 +163,8 @@ public class LobbyController : NetworkBehaviour
         _playerNames.Clear();
         foreach (var entry in InstanceFinder.ServerManager.Clients)
         {
-            _playerNames.Add(entry.Value, nameDict[entry.Value.ClientId]);
+            if(!_playerNames.ContainsKey(entry.Value))
+                _playerNames.Add(entry.Value, nameDict[entry.Value.ClientId]);
         }
     }
 }

@@ -1,13 +1,8 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using FishNet;
-using FishNet.Connection;
 using FishNet.Managing.Scened;
-using FishNet.Object.Synchronizing;
 using UnityEngine;
 
 public class SceneDataHelper : MonoBehaviour

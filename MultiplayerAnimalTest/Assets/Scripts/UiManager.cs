@@ -54,7 +54,6 @@ public class UiManager : NetworkBehaviour
             return;
 
         _backToLobbyTriggered = true;
-        Debug.Log("Going back to the lobby");
         SceneLoadData sld = new SceneLoadData("Lobby");
         sld.ReplaceScenes = ReplaceOption.All;
         sld.Params.ClientParams = SerializePlayerNames();

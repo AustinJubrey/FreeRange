@@ -72,7 +72,8 @@ public class FreeRangePlayerManager : NetworkBehaviour
         
         foreach (var entry in InstanceFinder.ServerManager.Clients)
         {
-            _playerConnectionNameDict.Add(entry.Value, nameDict[entry.Value.ClientId]);
+            if(!_playerConnectionNameDict.ContainsKey(entry.Value))
+                _playerConnectionNameDict.Add(entry.Value, nameDict[entry.Value.ClientId]);
         }
     }
 
