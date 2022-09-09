@@ -129,6 +129,11 @@ public class FreeRangePlayerManager : NetworkBehaviour
         return _playerInfo.Find(x => x.Connection == conn);
     }
     
+    public List<PlayerInfo> GetAllPlayerInfo()
+    {
+        return _playerInfo;
+    }
+    
     private void RefreshPlayerConnectionsAndBroadcast()
     {
         UpdatePlayerInfo();

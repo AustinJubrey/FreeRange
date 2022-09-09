@@ -9,6 +9,7 @@ using UnityEngine;
 public class EscapePoint : NetworkBehaviour
 {
     private int _maxPlayers = 1;
+    private bool _gameOverTriggered;
 
     private HashSet<int> _presentPlayerIds;
 
@@ -32,7 +33,7 @@ public class EscapePoint : NetworkBehaviour
 
     private void Update()
     {
-        if (!IsServer)
+        if (!IsServer || _gameOverTriggered)
             return;
         
         if (_presentPlayerIds.Count > 0)
@@ -42,6 +43,8 @@ public class EscapePoint : NetworkBehaviour
                 if (CheckWinConditions())
                 {
                     Debug.Log("Players Win!");
+                    PiersEvent.Post(PiersEventKey.EventKey.PlayersWin);
+                    _gameOverTriggered = true;
                 }
             }
         }

@@ -17,10 +17,10 @@ public class SceneDataHelper : MonoBehaviour
 
     private void Awake()
     {
-        InstanceFinder.SceneManager.OnLoadEnd += SceneManagerOnOnLoadEnd;
+        InstanceFinder.SceneManager.OnLoadEnd += SceneManagerOnLoadEnd;
     }
 
-    private void SceneManagerOnOnLoadEnd(SceneLoadEndEventArgs obj)
+    private void SceneManagerOnLoadEnd(SceneLoadEndEventArgs obj)
     {
         var data = obj.QueueData;
         var serializedData = data.SceneLoadData.Params.ClientParams;
@@ -41,6 +41,14 @@ public class SceneDataHelper : MonoBehaviour
         if (playerManager != null)
         {
             playerManager.SetPlayerDataFromLobby(_playerConnectionDict);
+        }
+        else
+        {
+            var lobbyController = FindObjectOfType<LobbyController>();
+            if (lobbyController != null)
+            {
+                lobbyController.SetPlayerDataFromGame(_playerConnectionDict);
+            }
         }
     }
 }

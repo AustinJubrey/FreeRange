@@ -47,7 +47,7 @@ namespace FishNet.Example.Prediction.CharacterControllers
             InstanceFinder.TimeManager.OnPostTick += TimeManager_OnPostTick;
             _characterController = GetComponent<CharacterController>();
         }
-        
+
         public CharacterController GetCharacterController()
         {
             return _characterController;
@@ -58,6 +58,7 @@ namespace FishNet.Example.Prediction.CharacterControllers
             if (InstanceFinder.TimeManager != null)
             {
                 InstanceFinder.TimeManager.OnTick -= TimeManager_OnTick;
+                InstanceFinder.TimeManager.OnPostTick -= TimeManager_OnPostTick;
             }
         }
 

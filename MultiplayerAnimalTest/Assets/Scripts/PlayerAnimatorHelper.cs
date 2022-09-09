@@ -32,6 +32,14 @@ public class PlayerAnimatorHelper : NetworkBehaviour
         InstanceFinder.TimeManager.OnTick += TimeManager_OnTick;
     }
     
+    private void OnDestroy()
+    {
+        if (InstanceFinder.TimeManager != null)
+        {
+            InstanceFinder.TimeManager.OnTick -= TimeManager_OnTick;
+        }
+    }
+    
     private void CheckInput(out MoveData md)
     {
         md = default;

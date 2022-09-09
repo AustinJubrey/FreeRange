@@ -45,7 +45,6 @@ public class LobbyController : NetworkBehaviour
 
     private void __playerReadyDict_OnChange(SyncDictionaryOperation op, NetworkConnection key, bool value, bool asServer)
     {
-        UpdatePlayerReadyDict();
         UpdatePlayerList();
     }
 
@@ -58,11 +57,14 @@ public class LobbyController : NetworkBehaviour
     {
         if (_nameField.text != "")
             _hasSetName = true;
-        UpdateDictionary(_nameField.text);
+        UpdateDictionaryRpc(_nameField.text);
     }
     
     public void OnReadyButton()
     {
+        if (_playerNames[LocalConnection] != "" && _playerNames[LocalConnection] != null)
+            _hasSetName = true;
+        
         if (!_hasSetName)
             return;
         _isReady = !_isReady;
@@ -71,7 +73,7 @@ public class LobbyController : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void UpdateDictionary(string name, NetworkConnection conn = null)
+    private void UpdateDictionaryRpc(string name, NetworkConnection conn = null)
     {
         _playerNames[conn] = name;
     }
@@ -146,11 +148,15 @@ public class LobbyController : NetworkBehaviour
         _playerNamesLabel.text = updatedString;
     }
     
-    private void UpdatePlayerReadyDict()
+    public void SetPlayerDataFromGame(Dictionary<int, string> nameDict)
     {
-        foreach (var player in _playerReadyDict)
+        if (!IsServer)
+            return;
+        
+        _playerNames.Clear();
+        foreach (var entry in InstanceFinder.ServerManager.Clients)
         {
-            //update visuals
+            _playerNames.Add(entry.Value, nameDict[entry.Value.ClientId]);
         }
     }
 }

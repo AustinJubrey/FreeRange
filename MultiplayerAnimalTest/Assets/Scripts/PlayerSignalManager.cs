@@ -25,6 +25,6 @@ public class PlayerSignalManager : NetworkBehaviour
     [ServerRpc]
     private void PostExit()
     {
-        PiersEvent.Post(PiersEventKey.EventKey.ClientExited);
+        //PiersEvent.Post(PiersEventKey.EventKey.ClientExited);
     }
 }

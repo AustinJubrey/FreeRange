@@ -9,6 +9,9 @@ public class PiersEventKey : MonoBehaviour
         ClientExited,
         PlayerCacheUpdated,
         CameraTargetBroadcast,
+        PlayersWin,
+        SendBackToLobby,
+        PlayersAllCaught,
         
     }
 
