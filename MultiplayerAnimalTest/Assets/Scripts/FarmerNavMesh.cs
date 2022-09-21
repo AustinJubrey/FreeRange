@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using FishNet.Example.Prediction.CharacterControllers;
 using FishNet.Object;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 public class FarmerNavMesh : NetworkBehaviour
 {
@@ -228,8 +230,20 @@ public class FarmerNavMesh : NetworkBehaviour
             _isWalking = false;
             _animator.SetBool("IsWalking", false);
         }
+        
+        if (_isRunning)
+        {
+            _isRunning = false;
+            _animator.SetBool("IsRunning", false);
+        }
 
-        StartCoroutine(DelayedGoToNextTarget(_targetList[_targetIndex].GetDelayTime()));
+        var farmerTarget = _targetList[_targetIndex];
+        var animationString = farmerTarget.GetAnimationString();
+        
+        if(animationString != string.Empty)
+            _animator.SetBool(animationString, true);
+
+        StartCoroutine(DelayedGoToNextTarget(farmerTarget.GetDelayTime(), animationString != string.Empty ? animationString : null));
     }
 
     private Transform CanSeePlayer()
@@ -302,9 +316,12 @@ public class FarmerNavMesh : NetworkBehaviour
         return false;
     }
 
-    private IEnumerator DelayedGoToNextTarget(float delay)
+    private IEnumerator DelayedGoToNextTarget(float delay, string animationString = null)
     {
         yield return new WaitForSeconds(delay);
+        
+        if(animationString != null)
+            _animator.SetBool(animationString, false);
 
         SetTarget(_targetList[GetNextTargetIndex()]);
     }

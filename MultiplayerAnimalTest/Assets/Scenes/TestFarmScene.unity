@@ -34409,7 +34409,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6870767335577921576, guid: a4476113634306e4c8c3d6679daf9911, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7394608109054131607, guid: a4476113634306e4c8c3d6679daf9911, type: 3}
       propertyPath: _networkObjectCache
@@ -44983,7 +44983,6 @@ MonoBehaviour:
   _sceneNetworkObjects:
   - {fileID: 612463818}
   - {fileID: 807371248}
-  - {fileID: 808986202}
   - {fileID: 1236230433}
   - {fileID: 1262502443}
   - {fileID: 1282257555}
@@ -45774,7 +45773,6 @@ MonoBehaviour:
   _sceneNetworkObjects:
   - {fileID: 612463818}
   - {fileID: 807371248}
-  - {fileID: 808986202}
   - {fileID: 1236230433}
   - {fileID: 1262502443}
   - {fileID: 1282257555}
@@ -67861,7 +67859,6 @@ MonoBehaviour:
   _sceneNetworkObjects:
   - {fileID: 612463818}
   - {fileID: 807371248}
-  - {fileID: 808986202}
   - {fileID: 1236230433}
   - {fileID: 1262502443}
   - {fileID: 1282257555}

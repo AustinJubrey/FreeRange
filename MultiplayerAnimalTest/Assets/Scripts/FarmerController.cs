@@ -2,6 +2,14 @@ using System.Collections.Generic;
 using FishNet.Object;
 using UnityEngine;
 
+public enum EFarmerJob
+{
+    JustStandThere = 0,
+    HammerTable,
+    HammerBuilding,
+    HammerFloor,
+}
+
 public class FarmerController : NetworkBehaviour
 {
     private FarmerNavMesh _navController;
