@@ -18,6 +18,7 @@ namespace FishNet.Example.Prediction.CharacterControllers
         {
             public float Horizontal;
             public float Vertical;
+            public float MouseHorizontal;
         }
         public struct ReconcileData
         {
@@ -38,7 +39,7 @@ namespace FishNet.Example.Prediction.CharacterControllers
 
         #region Private.
         private CharacterController _characterController;
-        private Vector3 _rotationSpeed = new Vector3(0,180,0);
+        private Vector3 _rotationSpeed = new Vector3(0,270,0);
         #endregion
 
         private void Awake()
@@ -92,23 +93,33 @@ namespace FishNet.Example.Prediction.CharacterControllers
             float horizontal = Input.GetAxisRaw("Horizontal");
             float vertical = Input.GetAxisRaw("Vertical");
 
-            if (horizontal == 0f && vertical == 0f)
+            float mouseHorizontal = Input.GetAxisRaw("Mouse X");
+
+            if (horizontal == 0f && vertical == 0f && mouseHorizontal == 0f)
                 return;
 
             md = new MoveData()
             {
                 Horizontal = horizontal,
-                Vertical = vertical
+                Vertical = vertical,
+                MouseHorizontal = mouseHorizontal
             };
         }
 
         [Replicate]
         private void Move(MoveData md, bool asServer, bool replaying = false)
         {
-            Vector3 move = new Vector3(0f, 0f, md.Vertical).normalized + new Vector3(0f, Physics.gravity.y, 0f);
-            var rotation = new Vector3(md.Horizontal, 0f, 0f).normalized.x * _rotationSpeed * (float)TimeManager.TickDelta;
-            transform.Rotate(rotation);
-            _characterController.Move(transform.rotation * move * _moveRate * (float)TimeManager.TickDelta);
+            if (md.MouseHorizontal != 0f)
+            {
+                var rotation = new Vector3(md.MouseHorizontal, 0f, 0f).normalized.x * _rotationSpeed * (float)TimeManager.TickDelta;
+                transform.Rotate(rotation);
+            }
+
+            if (md.Horizontal != 0f || md.Vertical != 0f)
+            {
+                Vector3 move = new Vector3(md.Horizontal, 0f, md.Vertical).normalized + new Vector3(0f, Physics.gravity.y, 0f);
+                _characterController.Move(transform.rotation * move * _moveRate * (float)TimeManager.TickDelta);
+            }
         }
 
         [Reconcile]

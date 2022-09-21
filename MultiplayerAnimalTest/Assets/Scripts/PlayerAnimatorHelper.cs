@@ -74,12 +74,12 @@ public class PlayerAnimatorHelper : NetworkBehaviour
     [Replicate]
     private void HandleAnimation(MoveData md, bool asServer, bool replaying = false)
     {
-        if (!_isWalkAnimating && md.Vertical > 0f)
+        if (!_isWalkAnimating && (md.Vertical != 0f || md.Horizontal != 0f))
         {
             _animator.SetBool("ShouldWalk", true);
             _isWalkAnimating = true;
         }
-        else if (_isWalkAnimating && md.Vertical <= 0f)
+        else if (_isWalkAnimating && md.Vertical == 0f && md.Horizontal == 0f)
         {
             _animator.SetBool("ShouldWalk", false);
             _isWalkAnimating = false;
