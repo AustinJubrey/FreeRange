@@ -28,10 +28,9 @@ public class InteractionPoint : NetworkBehaviour
         _exitCallback = callback;
     }
     
-    [ServerRpc(RunLocally = true)]
+    [ServerRpc(RequireOwnership = false)]
     private void OnPlayerTriggered(Transform playerTransform)
     {
-        Debug.Log("player added: " + playerTransform.name);
         _nearbyPlayers.Add(playerTransform);
         _enterCallback?.Invoke();
     }

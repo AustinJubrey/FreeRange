@@ -20,8 +20,8 @@ public class ChickJail : NetworkBehaviour
 
     private void Start()
     {
-        _interactionPoint.SetEnterCallback(OnOpenDoorAvailable);
-        _interactionPoint.SetExitCallback(OnOpenDoorNoLongerAvailable);
+        _interactionPoint.SetEnterCallback(OnOpenDoorAvailableRpc);
+        _interactionPoint.SetExitCallback(OnOpenDoorNoLongerAvailableRpc);
     }
 
     public void OpenDoor()
@@ -40,6 +40,18 @@ public class ChickJail : NetworkBehaviour
         
         _animator.SetBool("DoorOpen", false);
         _doorOpen = false;
+    }
+    
+    [ServerRpc(RequireOwnership = false)]
+    private void OnOpenDoorAvailableRpc()
+    {
+        OnOpenDoorAvailable();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void OnOpenDoorNoLongerAvailableRpc()
+    {
+        OnOpenDoorNoLongerAvailable();
     }
     
     [ObserversRpc]
