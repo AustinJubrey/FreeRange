@@ -1,4 +1,5 @@
 using FishNet.Object;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ChickJailInteractionPoint : InteractionPoint
@@ -13,16 +14,23 @@ public class ChickJailInteractionPoint : InteractionPoint
     // Update is called once per frame
     void Update()
     {
+        /*
         if (_doorCooldownCount > 0)
         {
             _doorCooldownCount -= Time.deltaTime;
         }
-
+        
         if (_doorCooldownCount  <= 0 && Input.GetKeyDown(KeyCode.E))
         {
             CheckIfShouldOpen();
             _doorCooldownCount = _doorCooldown;
         }
+        */
+    }
+
+    protected override void OnPlayerInteraction(Transform playerTransform)
+    {
+        _chickJail.OpenDoor();
     }
 
     [ServerRpc(RequireOwnership = false)]

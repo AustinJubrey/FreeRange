@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using FishNet.Object;
@@ -35,22 +36,38 @@ public class InteractionPoint : NetworkBehaviour
         _enterCallback?.Invoke();
     }
     
+    protected virtual void OnPlayerInteraction(Transform playerTransform)
+    {
+        // Player has interacted, do the thing
+        Debug.Log("player interacted with thing");
+    }
+
     protected void OnTriggerEnter(Collider other)
     {
         var playerController = other.GetComponent<ChickPlayerController>();
         if (playerController != null)
         {
-            _nearbyPlayers.Add(other.transform);
             OnPlayerTriggered(other.transform);
         }
     }
-    
+
     private void OnTriggerExit(Collider other)
     {
         var playerController = other.GetComponent<ChickPlayerController>();
         if (playerController != null)
         {
-            _nearbyPlayers.Remove(other.transform);
+            OnPlayerExitTrigger(other.transform);
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void OnPlayerExitTrigger(Transform playerTransform)
+    {
+        var playerController = playerTransform.GetComponent<ChickPlayerController>();
+        if (playerController != null)
+        {
+            playerController.SetInteractionCallback(null);
+            _nearbyPlayers.Remove(playerTransform);
             _exitCallback?.Invoke();
         }
     }

@@ -2,6 +2,7 @@ using FishNet.Example.Prediction.CharacterControllers;
 using FishNet.Object;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class ChickPlayerController : NetworkBehaviour
 {
@@ -10,6 +11,9 @@ public class ChickPlayerController : NetworkBehaviour
     
     [SerializeField]
     private Camera _camera;
+    
+    [SerializeField]
+    private Camera _chickVisionCamera;
     
     private CharacterControllerPrediction _characterPrediction;
     private PlayerInventory _inventory;
@@ -23,6 +27,14 @@ public class ChickPlayerController : NetworkBehaviour
     private float _footStepCount;
     private float _normalFootStepTime = 0.35f;
     private float _maxFootStepTime;
+    
+    // Chick Vision
+    private bool _isMainCameraOn = true;
+    private float _chickVisionCooldown = 0.5f;
+    private float _chickVisionCount;
+    
+    // Interaction
+    private UnityAction<Transform> _localInteractionCallback;
 
     private void Awake()
     {
@@ -34,10 +46,12 @@ public class ChickPlayerController : NetworkBehaviour
     private void Start()
     {
         PiersEvent.Post(PiersEventKey.EventKey.CameraTargetBroadcast, _camera);
+        _chickVisionCamera.gameObject.SetActive(false);
     }
 
     private void Update()
     {
+        HandleInteraction();
         HandleFootStepAudio();
         
         if (!_canEquip)
@@ -49,13 +63,51 @@ public class ChickPlayerController : NetworkBehaviour
                 _canEquip = true;
             }
         }
+
+        if (_chickVisionCount <= 0)
+        {
+            if (Input.GetKeyDown(KeyCode.V))
+            {
+                _chickVisionCount = _chickVisionCooldown;
+                ToggleCamera();
+            }
+        }
+        else
+        {
+            _chickVisionCount -= Time.deltaTime;
+        }
     }
-    
+
+    private void HandleInteraction()
+    {
+        if (_localInteractionCallback != null && Input.GetKeyDown(KeyCode.E))
+        {
+            _localInteractionCallback?.Invoke(transform);
+        }
+    }
+
+    private void ToggleCamera()
+    {
+        if (_isMainCameraOn)
+        {
+            _camera.gameObject.SetActive(false);
+            _chickVisionCamera.gameObject.SetActive(true);
+            _isMainCameraOn = false;
+        }
+        else
+        {
+            _camera.gameObject.SetActive(true);
+            _chickVisionCamera.gameObject.SetActive(false);
+            _isMainCameraOn = true;
+        }
+    }
+
     private void HandleFootStepAudio()
     {
         float vertical = Input.GetAxisRaw("Vertical");
+        float horizontal = Input.GetAxisRaw("Horizontal");
         
-        if (vertical == 0)
+        if (vertical == 0 && horizontal == 0)
             return;
 
         if (_footStepCount < _maxFootStepTime)
@@ -105,7 +157,12 @@ public class ChickPlayerController : NetworkBehaviour
             OnEquip();
         }
     }
-    
+
+    public void SetInteractionCallback(UnityAction<Transform> callback)
+    {
+        _localInteractionCallback = callback;
+    }
+
     [ObserversRpc]
     public void SetNameLabel(string name)
     {

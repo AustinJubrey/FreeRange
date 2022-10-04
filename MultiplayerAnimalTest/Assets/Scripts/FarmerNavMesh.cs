@@ -15,7 +15,7 @@ public class FarmerNavMesh : NetworkBehaviour
     [SerializeField]
     private Animator _animator;
     
-    private List<Transform> _targetPlayers;
+    private List<ChickPlayerController> _targetPlayers;
     private Transform _chaseTarget;
 
     private NavMeshAgent _navMeshAgent;
@@ -43,7 +43,7 @@ public class FarmerNavMesh : NetworkBehaviour
     
     void Awake()
     {
-        _targetPlayers = new List<Transform>();
+        _targetPlayers = new List<ChickPlayerController>();
         _navMeshAgent = GetComponent<NavMeshAgent>();
         _targetTransform = _targetList[_targetIndex].transform;
         _defaultSpeed = _navMeshAgent.speed;
@@ -182,7 +182,11 @@ public class FarmerNavMesh : NetworkBehaviour
 
     public void SetPlayerTargets(List<Transform> transforms)
     {
-        _targetPlayers = transforms;
+        _targetPlayers = new List<ChickPlayerController>();
+        foreach (var playerTransform in transforms)
+        {
+            _targetPlayers.Add(playerTransform.GetComponent<ChickPlayerController>());
+        }
     }
 
     private void OnStartChasing()
@@ -251,15 +255,17 @@ public class FarmerNavMesh : NetworkBehaviour
         if (_targetPlayers == null || _targetPlayers.Count == 0)
             return null;
 
-        var transformsToDelete = new List<Transform>();
+        var transformsToDelete = new List<ChickPlayerController>();
 
-        foreach (var player in _targetPlayers)
+        foreach (var playerController in _targetPlayers)
         {
-            if (player == null)
+            if (playerController == null)
             {
-                transformsToDelete.Add(player);
+                transformsToDelete.Add(playerController);
                 continue;
             }
+
+            var player = playerController.transform;
 
             var targetDir = new Vector3(player.position.x, player.position.y + 0.5f, player.position.z) - transform.position;
             var angle = Vector3.Angle(targetDir, transform.forward);
@@ -276,14 +282,14 @@ public class FarmerNavMesh : NetworkBehaviour
         return null;
     }
 
-    private void RemoveNullPlayersFromList(List<Transform> toRemove)
+    private void RemoveNullPlayersFromList(List<ChickPlayerController> toRemove)
     {
         if (toRemove == null || toRemove.Count == 0)
             return;
         
-        foreach (var transform in toRemove)
+        foreach (var controller in toRemove)
         {
-            _targetPlayers.Remove(transform);
+            _targetPlayers.Remove(controller);
         }
     }
 
