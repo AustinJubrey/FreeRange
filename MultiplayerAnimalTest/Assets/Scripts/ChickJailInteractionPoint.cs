@@ -11,55 +11,9 @@ public class ChickJailInteractionPoint : InteractionPoint
     private float _doorCooldown = 1f;
     private float _doorCooldownCount = 0;
     
-    // Update is called once per frame
-    void Update()
-    {
-        /*
-        if (_doorCooldownCount > 0)
-        {
-            _doorCooldownCount -= Time.deltaTime;
-        }
-        
-        if (_doorCooldownCount  <= 0 && Input.GetKeyDown(KeyCode.E))
-        {
-            CheckIfShouldOpen();
-            _doorCooldownCount = _doorCooldown;
-        }
-        */
-    }
-
     protected override void OnPlayerInteraction(Transform playerTransform)
     {
-        _chickJail.OpenDoor();
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void CheckIfShouldOpen()
-    {
-        if (_nearbyPlayers.Count > 0)
-        {
-            if (!_hasChecked && DoesNearbyPlayerHaveKey())
-            {
-                _chickJail.OpenDoor();
-            }
-        }
-    }
-
-    private bool DoesNearbyPlayerHaveKey()
-    {
-        _hasChecked = true;
-        foreach (var playerTransform in _nearbyPlayers)
-        {
-            var chickController = playerTransform.GetComponent<ChickPlayerController>();
-            if (chickController != null)
-            {
-                if (chickController.GetEquippedPickUp() == EPickUpID.CoopCageKey)
-                {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        if(playerTransform.GetComponent<ChickPlayerController>().GetEquippedPickUp() == EPickUpID.CoopCageKey)
+            _chickJail.OpenDoor();
     }
 }

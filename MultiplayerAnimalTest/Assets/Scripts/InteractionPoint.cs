@@ -34,6 +34,7 @@ public class InteractionPoint : NetworkBehaviour
     {
         _nearbyPlayers.Add(playerTransform);
         _enterCallback?.Invoke();
+        playerTransform.GetComponent<ChickPlayerController>().SetInteractionCallback(OnPlayerInteraction);
     }
     
     protected virtual void OnPlayerInteraction(Transform playerTransform)

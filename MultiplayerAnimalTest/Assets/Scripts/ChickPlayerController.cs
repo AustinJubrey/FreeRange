@@ -78,12 +78,19 @@ public class ChickPlayerController : NetworkBehaviour
         }
     }
 
+    
     private void HandleInteraction()
     {
-        if (_localInteractionCallback != null && Input.GetKeyDown(KeyCode.E))
+        if (IsOwner && Input.GetKeyDown(KeyCode.E))
         {
-            _localInteractionCallback?.Invoke(transform);
+            TriggerInteraction();
         }
+    }
+    
+    [ServerRpc(RequireOwnership = false)]
+    private void TriggerInteraction()
+    {
+        _localInteractionCallback?.Invoke(transform);
     }
 
     private void ToggleCamera()
@@ -160,6 +167,7 @@ public class ChickPlayerController : NetworkBehaviour
 
     public void SetInteractionCallback(UnityAction<Transform> callback)
     {
+        Debug.Log("interaction callback set for player (is null): " + (callback == null));
         _localInteractionCallback = callback;
     }
 

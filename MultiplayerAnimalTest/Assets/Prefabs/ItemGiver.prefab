@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 325524220564205545}
   - component: {fileID: 6620918673402945524}
   - component: {fileID: 7582285727180191451}
+  - component: {fileID: 7764288043937856696}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -54,6 +55,21 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &7764288043937856696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1108732921359220635}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd2d6451edb834841a74e8643f24caef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 3830493090348052164}
+  _networkObjectCache: {fileID: 3830493090348052164}
 --- !u!1 &1920145305116829133
 GameObject:
   m_ObjectHideFlags: 0
@@ -63,6 +79,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1208516187155996218}
+  - component: {fileID: 3830493090348052164}
   m_Layer: 0
   m_Name: ItemGiver
   m_TagString: Untagged
@@ -86,3 +103,30 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3830493090348052164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1920145305116829133}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <IsNested>k__BackingField: 0
+  <ComponentIndex>k__BackingField: 0
+  _networkBehaviours:
+  - {fileID: 7764288043937856696}
+  <ParentNetworkObject>k__BackingField: {fileID: 0}
+  <ChildNetworkObjects>k__BackingField: []
+  _isNetworked: 1
+  _isGlobal: 0
+  _disableOnDespawn: 0
+  NetworkObserver: {fileID: 0}
+  <PrefabId>k__BackingField: -1
+  _scenePathHash: 0
+  <SceneId>k__BackingField: 0
+  <AssetPathHash>k__BackingField: 133969562246052215
+  _sceneNetworkObjects: []

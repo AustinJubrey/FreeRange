@@ -8,6 +8,15 @@ public class ItemGiver : NetworkBehaviour
     
     [SerializeField]
     private Transform _spawnLocation;
+    
+    [SerializeField]
+    private ChickJailInteractionPoint _interactionPoint;
+    
+    private void Start()
+    {
+        //_interactionPoint.SetEnterCallback(OnOpenDoorAvailableRpc);
+        //_interactionPoint.SetExitCallback(OnOpenDoorNoLongerAvailableRpc);
+    }
 
     [ServerRpc(RequireOwnership = false)]
     public void SpawnItem()
