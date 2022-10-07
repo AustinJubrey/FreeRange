@@ -1,4 +1,5 @@
-﻿using FishNet.Object;
+﻿using FishNet.Connection;
+using FishNet.Object;
 using FishNet.Object.Prediction;
 using UnityEngine;
 
@@ -40,6 +41,7 @@ namespace FishNet.Example.Prediction.CharacterControllers
         #region Private.
         private CharacterController _characterController;
         private Vector3 _rotationSpeed = new Vector3(0,270,0);
+        private bool _canMove = true;
         #endregion
 
         private void Awake()
@@ -115,7 +117,7 @@ namespace FishNet.Example.Prediction.CharacterControllers
                 transform.Rotate(rotation);
             }
 
-            if (md.Horizontal != 0f || md.Vertical != 0f)
+            if (_canMove && (md.Horizontal != 0f || md.Vertical != 0f))
             {
                 Vector3 move = new Vector3(md.Horizontal, 0f, md.Vertical).normalized + new Vector3(0f, Physics.gravity.y, 0f);
                 _characterController.Move(transform.rotation * move * _moveRate * (float)TimeManager.TickDelta);
@@ -128,6 +130,25 @@ namespace FishNet.Example.Prediction.CharacterControllers
             transform.position = rd.Position;
             transform.rotation = rd.Rotation;
         }
+
+        [TargetRpc]
+        public void SetWasTeleported(NetworkConnection connection, bool canMove)
+        {
+            MoveData md = new MoveData();
+            md.Vertical = 0.1f;
+            md.Horizontal = 0.1f;
+            md.MouseHorizontal = 0.1f;
+            Move(md, false);
+            SetCanMove(canMove);
+        }
+
+        [ServerRpc(RunLocally = true)]
+        private void SetCanMove(bool canMove)
+        {
+            _canMove = canMove;
+        }
+
+
     }
 
 

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using FishNet.Example.Prediction.CharacterControllers;
@@ -264,6 +263,9 @@ public class FarmerNavMesh : NetworkBehaviour
                 transformsToDelete.Add(playerController);
                 continue;
             }
+
+            if (playerController.GetIsHidden())
+                continue;
 
             var player = playerController.transform;
 

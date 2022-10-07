@@ -17,7 +17,6 @@ public class ChickPlayerController : NetworkBehaviour
     
     private CharacterControllerPrediction _characterPrediction;
     private PlayerInventory _inventory;
-    private PlayerAnimatorHelper _animatorHelper;
 
     private float _equipCooldown = 1f;
     private float _equipCooldownCounter;
@@ -33,6 +32,9 @@ public class ChickPlayerController : NetworkBehaviour
     private float _chickVisionCooldown = 0.5f;
     private float _chickVisionCount;
     
+    // Hiding
+    private bool _isHidden;
+    
     // Interaction
     private UnityAction<Transform> _localInteractionCallback;
 
@@ -40,7 +42,6 @@ public class ChickPlayerController : NetworkBehaviour
     {
         _characterPrediction = GetComponent<CharacterControllerPrediction>();
         _inventory = GetComponent<PlayerInventory>();
-        _animatorHelper = GetComponent<PlayerAnimatorHelper>();
     }
 
     private void Start()
@@ -141,7 +142,7 @@ public class ChickPlayerController : NetworkBehaviour
             _ => AudioTrackTypes.PlayerFootStepsGrass01
         };
 
-        AudioUtilityManager.Instance.PlaySound(transform, transform.position, track.ToString());
+        AudioUtilityManager.Instance.PlaySound(transform, Vector3.zero, track.ToString());
     }
 
     public Camera GetCamera()
@@ -188,15 +189,26 @@ public class ChickPlayerController : NetworkBehaviour
         return _inventory.GetEquippedItem();
     }
 
-    public void TeleportToLocation(Vector3 position)
+    public void TeleportToLocation(Vector3 position, bool canMoveAfterTele = true)
     {
         _characterPrediction.GetCharacterController().enabled = false;
         transform.position = position;
         _characterPrediction.GetCharacterController().enabled = true;
+        _characterPrediction.SetWasTeleported(Owner, canMoveAfterTele);
     }
 
     public void BackStabFarmer(Transform attackTarget)
     {
         // Do a little stab animation on the weapon slot, so we can "use" things
+    }
+
+    public bool GetIsHidden()
+    {
+        return _isHidden;
+    }
+
+    public void SetHidden(bool isHidden)
+    {
+        _isHidden = isHidden;
     }
 }

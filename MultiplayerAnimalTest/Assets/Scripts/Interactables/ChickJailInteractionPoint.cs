@@ -1,5 +1,3 @@
-using FishNet.Object;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class ChickJailInteractionPoint : InteractionPoint
