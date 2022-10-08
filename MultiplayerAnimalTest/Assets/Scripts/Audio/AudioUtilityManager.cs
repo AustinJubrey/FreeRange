@@ -52,6 +52,7 @@ public class AudioUtilityManager : NetworkBehaviour
         GameObject dynamicSourceGameObject = Instantiate(_audioSourcePrefab);
         dynamicSourceGameObject.transform.SetParent(soundParent);
         dynamicSourceGameObject.transform.position = soundPosition;
+        dynamicSourceGameObject.transform.localPosition = Vector3.zero;
         DynamicAudioSourceMB dynamicSource = dynamicSourceGameObject.GetComponent<DynamicAudioSourceMB>();
         dynamicSource.SetAudioTrack(GetAudioTrackByType(GetTrackTypeFromString(TrackType)));
     }

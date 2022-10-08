@@ -21,6 +21,11 @@ public class PigController : NetworkBehaviour
     private bool _isRunning;
     private bool _targetReached;
     
+    // Foot Steps
+    private float _footStepCount;
+    private float _normalFootStepTime = 0.625f;
+    private float _maxFootStepTime;
+    
     void Awake()
     {
         _navMeshAgent = GetComponent<NavMeshAgent>();
@@ -34,6 +39,7 @@ public class PigController : NetworkBehaviour
             return;
         
         HandleMovement();
+        HandleFootStepAudio();
     }
 
     private void HandleMovement()
@@ -45,6 +51,38 @@ public class PigController : NetworkBehaviour
         
         if (!_targetReached && CheckHasReachedDestination())
             OnReachWanderDestination();
+    }
+    
+    private void HandleFootStepAudio()
+    {
+        if (!_isWalking)
+            return;
+        
+        if (_footStepCount < _maxFootStepTime)
+        {
+            _footStepCount += Time.deltaTime;
+        }
+        else
+        {
+            OnFootStep();
+            _maxFootStepTime = _normalFootStepTime;
+            _footStepCount = 0;
+        }
+    }
+    
+    private void OnFootStep()
+    {
+        var soundToUse = Random.Range(0, 3);
+
+        var track = soundToUse switch
+        {
+            0 => AudioTrackTypes.PlayerFootStepsGrass01,
+            1 => AudioTrackTypes.PlayerFootStepsGrass02,
+            2 => AudioTrackTypes.PlayerFootStepsGrass03,
+            _ => AudioTrackTypes.PlayerFootStepsGrass01
+        };
+
+        AudioUtilityManager.Instance.PlaySound(transform, transform.position, track.ToString());
     }
 
     private void SetRandomWanderDestination()

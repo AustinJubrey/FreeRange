@@ -25,16 +25,21 @@ public class FarmerNavMesh : NetworkBehaviour
     private bool _isRunning;
     private bool _isChasingTarget;
     private bool _isDowned;
+    private bool _isInvestigating;
 
     private float _chaseCaptureDistance = 2f;
     private float _fieldOfViewAngle = 30f;
     private float _chaseFieldOfViewAngle = 60f;
     private float _lostChaseCount;
-    private float _lostChaseTimer = 5f;
+    private float _lostChaseTimer = 0f;
+    private Vector3 _chaseTargetLastSeenPosition = Vector3.zero; 
+    private float _investigationCount;
+    private float _investigationTimer = 6f;
     
     // Foot Steps
     private float _footStepCount;
-    private float _normalFootStepTime = 0.35f;
+    private float _normalFootStepTime = 0.4f;
+    private float _runningFootStepTime = 0.2665f;
     private float _maxFootStepTime;
 
     private float _defaultSpeed;
@@ -76,7 +81,7 @@ public class FarmerNavMesh : NetworkBehaviour
                 _lostChaseCount += Time.deltaTime;
                 
                 if(_lostChaseCount >= _lostChaseTimer)
-                    OnStopChasing();
+                    OnStopChasing(true);
             }
             else if (_lostChaseCount > 0)
                 _lostChaseCount = 0;
@@ -95,7 +100,7 @@ public class FarmerNavMesh : NetworkBehaviour
         else
         {
             OnFootStep();
-            _maxFootStepTime = _isRunning ? 0.25f : _normalFootStepTime;
+            _maxFootStepTime = _isRunning ? _runningFootStepTime : _normalFootStepTime;
             _footStepCount = 0;
         }
     }
@@ -142,22 +147,22 @@ public class FarmerNavMesh : NetworkBehaviour
     {
         if (!IsServer)
             return;
-        
+
         if (_isChasingTarget && _chaseTarget)
         {
             HandleChasing();
         }
+        else if (_isInvestigating)
+        {
+            HandleInvestigating();
+        }
         else if (_targetTransform)
         {
             _navMeshAgent.destination = _targetTransform.position;
+            
+            if (!_targetReached && CheckHasReachedDestination())
+                OnReachFarmerTarget();
         }
-        else
-        {
-            return;
-        }
-
-        if (!_targetReached && CheckHasReachedDestination())
-            OnReachFarmerTarget();
     }
 
     private void HandleChasing()
@@ -179,6 +184,33 @@ public class FarmerNavMesh : NetworkBehaviour
         }
     }
 
+    private void HandleInvestigating()
+    {
+        if (Vector3.Distance(transform.position, _chaseTargetLastSeenPosition) > _chaseCaptureDistance)
+        {
+            _navMeshAgent.destination = _chaseTargetLastSeenPosition;
+        }
+        else
+        {
+            // if we want him to look around, it would happen here
+            if (_investigationCount == 0)
+            {
+                _isWalking = false;
+                _animator.SetBool("IsWalking", false);
+            }
+
+            _animator.SetBool("IsWalking", false);
+            
+            _investigationCount += Time.deltaTime;
+
+            if (_investigationCount >= _investigationTimer)
+            {
+                _investigationCount = 0;
+                _isInvestigating = false;
+            }
+        }
+    }
+
     public void SetPlayerTargets(List<Transform> transforms)
     {
         _targetPlayers = new List<ChickPlayerController>();
@@ -196,7 +228,7 @@ public class FarmerNavMesh : NetworkBehaviour
         AudioUtilityManager.Instance.PlaySound(transform, transform.position, AudioTrackTypes.FarmerNoticedPlayerSound.ToString());
     }
     
-    private void OnStopChasing()
+    private void OnStopChasing(bool shouldInvestigate = false)
     {
         _navMeshAgent.speed = _defaultSpeed;
         _chaseTarget = null;
@@ -204,6 +236,14 @@ public class FarmerNavMesh : NetworkBehaviour
         _isChasingTarget = false;
         _lostChaseCount = 0;
         _animator.SetBool("IsRunning", false);
+        
+        if(shouldInvestigate)
+            InvestigateLastSeenPosition();
+    }
+
+    private void InvestigateLastSeenPosition()
+    {
+        _isInvestigating = true;
     }
 
     private bool CheckHasReachedDestination()
@@ -297,7 +337,7 @@ public class FarmerNavMesh : NetworkBehaviour
 
     private bool CanSeeChaseTarget()
     {
-        if (_chaseTarget == null)
+        if (_chaseTarget == null || _chaseTarget.GetComponent<ChickPlayerController>().GetIsHidden())
             return false;
         
         var targetDir = new Vector3(_chaseTarget.position.x, _chaseTarget.position.y + 0.5f, _chaseTarget.position.z) - transform.position;
@@ -305,7 +345,12 @@ public class FarmerNavMesh : NetworkBehaviour
 
         if (angle < _chaseFieldOfViewAngle)
         {
-            return CheckIfHasLineOfSight(targetDir);
+            bool hasLineOfSight = CheckIfHasLineOfSight(targetDir);
+
+            if(hasLineOfSight)
+                _chaseTargetLastSeenPosition = _chaseTarget.position;
+            
+            return hasLineOfSight;
         }
 
         return false;

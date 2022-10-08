@@ -24,7 +24,7 @@ public class ChickPlayerController : NetworkBehaviour
     
     // Foot Steps
     private float _footStepCount;
-    private float _normalFootStepTime = 0.35f;
+    private float _normalFootStepTime = 0.417f;
     private float _maxFootStepTime;
     
     // Chick Vision
@@ -142,7 +142,7 @@ public class ChickPlayerController : NetworkBehaviour
             _ => AudioTrackTypes.PlayerFootStepsGrass01
         };
 
-        AudioUtilityManager.Instance.PlaySound(transform, Vector3.zero, track.ToString());
+        AudioUtilityManager.Instance.PlaySound(transform, transform.position, track.ToString());
     }
 
     public Camera GetCamera()
