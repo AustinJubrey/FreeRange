@@ -2212,6 +2212,7 @@ MonoBehaviour:
   _nameField: {fileID: 454184363}
   _playerNamesLabel: {fileID: 991452259}
   _readyButtonLabel: {fileID: 2007577576}
+  _networkManager: {fileID: 2115017305}
 --- !u!4 &1656870994
 Transform:
   m_ObjectHideFlags: 0
@@ -3444,7 +3445,7 @@ MonoBehaviour:
   _ipv6BindAddress: 
   _port: 23442
   _maximumClients: 4095
-  _clientAddress: 3.239.184.72
+  _clientAddress: 54.236.37.64
   _timeout: 15
 --- !u!114 &2115017309
 MonoBehaviour:

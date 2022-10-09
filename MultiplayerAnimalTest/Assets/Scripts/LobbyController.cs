@@ -1,10 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading.Tasks;
 using FishNet;
 using FishNet.Connection;
+using FishNet.Managing;
 using FishNet.Managing.Scened;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
@@ -29,9 +33,20 @@ public class LobbyController : NetworkBehaviour
     
     [SerializeField]
     private TextMeshProUGUI _readyButtonLabel;
+    
+    [SerializeField]
+    private NetworkManager _networkManager;
 
     private bool _isReady;
     private bool _hasSetName;
+    
+    private static string API_URL = "https://api.cloud.playflow.app/";
+    private static string version = "2";
+
+    private void Awake()
+    {
+        FindAndSetFirstServerAddress();
+    }
 
     public override void OnStartClient()
     {
@@ -41,6 +56,25 @@ public class LobbyController : NetworkBehaviour
         UpdateReadinessDictionary(_isReady);
         _readyButtonLabel.color = new Color32(254,9,0,255);
         Reinitialize();
+    }
+
+    private async Task ConnectToExistingServer(Server server)
+    {
+        _networkManager.TransportManager.Transport.SetClientAddress(server.match_id);
+        Debug.Log("Connected to: " + server.match_id);
+    }
+
+    private async Task FindAndSetFirstServerAddress()
+    {
+        string response = await GetActiveServers("468ff68469868b4285933c61c28e8135", "us-east", true);
+        Server[] servers = JsonHelper.FromJson<Server>(response);
+        
+        if(servers != null && servers.Length > 0)
+            ConnectToExistingServer(servers[0]);
+        else
+        {
+            Debug.Log("couldn't find servers");
+        }
     }
 
     // For setting things up after returning from a game
@@ -165,6 +199,92 @@ public class LobbyController : NetworkBehaviour
         {
             if(!_playerNames.ContainsKey(entry.Value))
                 _playerNames.Add(entry.Value, nameDict[entry.Value.ClientId]);
+        }
+    }
+    
+    public static async Task<string> GetActiveServers(string token,string region, bool includelaunchingservers)
+    {
+        String output = "";
+        try
+        {
+        
+            string actionUrl = API_URL + "list_servers";
+
+            using (var client = new HttpClient())
+            using (var formData = new MultipartFormDataContent())
+            {
+                formData.Headers.Add("token", token);
+                formData.Headers.Add("region", region);
+                formData.Headers.Add("version", version);
+                formData.Headers.Add("includelaunchingservers", includelaunchingservers.ToString());
+
+            
+                var response = await client.PostAsync(actionUrl, formData);
+            
+                if (!response.IsSuccessStatusCode)
+                {
+                    Debug.Log(System.Text.Encoding.UTF8.GetString( await response.Content.ReadAsByteArrayAsync()));
+                }
+            
+                output = System.Text.Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync());
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
+        }
+
+        return output;
+    }
+    
+    [Serializable]
+    public class Server
+    {
+        public string ssl_port;
+        public bool ssl_enabled;
+        public string server_arguments;
+        public string status;
+        public string port;
+        public string match_id;
+        public string ssl_url;
+
+    }
+
+
+    [Serializable]
+    public class MatchInfo
+    {
+        public string match_id;
+        public string server_url;
+        public string ssl_port;
+    }
+
+    public static class JsonHelper
+    {
+        public static T[] FromJson<T>(string json)
+        {
+            Wrapper<T> wrapper = JsonUtility.FromJson<Wrapper<T>>(json);
+            return wrapper.servers;
+        }
+
+        public static string ToJson<T>(T[] array)
+        {
+            Wrapper<T> wrapper = new Wrapper<T>();
+            wrapper.servers = array;
+            return JsonUtility.ToJson(wrapper);
+        }
+
+        public static string ToJson<T>(T[] array, bool prettyPrint)
+        {
+            Wrapper<T> wrapper = new Wrapper<T>();
+            wrapper.servers = array;
+            return JsonUtility.ToJson(wrapper, prettyPrint);
+        }
+
+        [Serializable]
+        private class Wrapper<T>
+        {
+            public T[] servers;
         }
     }
 }
