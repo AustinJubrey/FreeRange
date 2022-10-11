@@ -45,10 +45,19 @@ namespace FishNet.Example.Prediction.CharacterControllers
         private CharacterController _characterController;
         private Vector3 _rotationSpeed = new Vector3(0,270,0);
         private float _ySpeed = 0;
-        private float _jumpHeight = 0.5f;
-        private float _gravity = -12f;
-        private float _terminalVelocity = -10f;
+        private float _jumpHeight = 0.4f;
+        private float _gravity = -20f;
+        private float _terminalVelocity = -12f;
         private bool _canMove = true;
+        
+        // Jumping
+        private bool _canJump = true;
+        private float _jumpCount;
+        private float _jumpCooldown = 0.33f;
+        
+        // Grounded check
+        public float GroundedOffset = -0.5f;
+        public float GroundedRadius = 0.2f;
         #endregion
 
         private void Awake()
@@ -76,7 +85,13 @@ namespace FishNet.Example.Prediction.CharacterControllers
         {
             if (IsOwner)
             {
+                if (!_canJump)
+                {
+                    ManageJumpTimer();
+                }
+
                 Reconciliation(default, false);
+                GroundedCheck();
                 CheckInput(out MoveData md);
                 Move(md, false);
             }
@@ -97,6 +112,17 @@ namespace FishNet.Example.Prediction.CharacterControllers
             Reconciliation(rd, true);
         }
 
+        private void ManageJumpTimer()
+        {
+            _jumpCount -= (float) TimeManager.TickDelta;
+
+            if (_jumpCount <= 0)
+            {
+                _jumpCount = _jumpCooldown;
+                _canJump = true;
+            }
+        }
+
         private void CheckInput(out MoveData md)
         {
             md = default;
@@ -104,10 +130,15 @@ namespace FishNet.Example.Prediction.CharacterControllers
             float horizontal = _canMove ? Input.GetAxisRaw("Horizontal") : 0f;
             float vertical = _canMove ? Input.GetAxisRaw("Vertical") : 0f;
             float mouseHorizontal = Input.GetAxisRaw("Mouse X");
-            bool jump = _canMove && Input.GetKeyDown(KeyCode.Space);
+            bool jump = _canMove && _canJump && Input.GetKeyDown(KeyCode.Space);
 
             if (horizontal == 0f && vertical == 0f && mouseHorizontal == 0f && !jump)
                 return;
+
+            if (jump)
+            {
+                _canJump = false;
+            }
 
             md = new MoveData()
             {
@@ -165,7 +196,14 @@ namespace FishNet.Example.Prediction.CharacterControllers
             _canMove = canMove;
         }
 
-
+        [ServerRpc(RunLocally = true)]
+        private void GroundedCheck()
+        {
+            // set sphere position, with offset
+            Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y + GroundedOffset,
+                transform.position.z);
+            _canJump = _canJump && Physics.CheckSphere(spherePosition, GroundedRadius);
+        }
     }
 
 
